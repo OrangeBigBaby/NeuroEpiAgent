@@ -32,6 +32,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from neurosurg_epi_agent.adapters import SEERAdapter  # noqa: E402
+from neurosurg_epi_agent.adapters.seer import DATA_ROOT_TOKEN  # noqa: E402
 
 
 def parse_data_version_args(items: list[str]) -> dict[str, str]:
@@ -106,11 +107,19 @@ def main() -> int:
         return 1
 
     payload = result.to_dict()
-    # Strip any absolute path that may have leaked in via the env vars a
-    # caller might have set (defense in depth: the adapter already enforces
-    # the token, this is a final scrub).
+    # Defence-in-depth scrub: if the caller exported NEUROSURG_EPI_SEER_ROOT,
+    # strip any literal occurrence of that absolute path from the serialized
+    # JSON. The adapter already neutralizes data_root structurally (it emits
+    # the DATA_ROOT_TOKEN), so this only catches a path that slipped into a
+    # provenance string. CRITICAL: only scrub a real, non-empty path — replacing
+    # the empty string would insert the token between every character and
+    # corrupt the JSON (the original bug). This never alters field names, plain
+    # text, or Unicode content; it only removes occurrences of the exact root
+    # path the caller passed in.
+    root_env = os.environ.get("NEUROSURG_EPI_SEER_ROOT", "")
     text = json.dumps(payload, ensure_ascii=False, sort_keys=True)
-    text = text.replace(os.environ.get("NEUROSURG_EPI_SEER_ROOT", ""), "<user-supplied>")
+    if root_env:
+        text = text.replace(root_env, DATA_ROOT_TOKEN)
     payload = json.loads(text)
     with out_path.open("w", encoding="utf-8") as fh:
         json.dump(payload, fh, indent=2, sort_keys=True, ensure_ascii=False)
