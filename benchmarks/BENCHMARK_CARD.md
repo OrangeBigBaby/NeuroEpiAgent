@@ -50,8 +50,8 @@ See `benchmarks/GOLD_STANDARD_PROCESS.md` for complete requirements.
 
 ### Database Routing Distribution
 - **NHANES**: 26 tasks
-- **SEER**: 2 tasks (expected infeasible - adapter not implemented)
-- **GBD**: 2 tasks (expected infeasible - adapter not implemented)
+- **SEER**: 2 tasks (expected infeasible - no planning/routing adapter; metadata inspection only)
+- **GBD**: 2 tasks (expected infeasible - no planning/routing adapter)
 
 ## Domains Covered
 

@@ -36,6 +36,8 @@ state changes.
 | D6 | The SEER adapter marks every data-version field the researcher did not supply as `needs_verification` rather than guessing. | supported | `tests/test_seer_adapter.py::TestDataVersion` |
 | D7 | The repository's `.gitignore` excludes raw data, `.codex/`, `.venv/`, generated logs, and SEER CSVs in any path. | supported | `.gitignore`; CI secret-scan + size-check jobs |
 | D8 | The repository's CI never downloads NHANES / SEER / CDC WONDER raw data. | supported | `.github/workflows/tests.yml` (only `pip install -e ".[dev]"` + `pytest`) |
+| D9 | The CDC WONDER adapter enforces the numeric disclosure rule independently of the Notes cell: `Deaths` 0-9 are flagged as suppression violations, 10-19 as unreliable, and non-numeric Deaths cells are never coerced to 0. | supported | `tests/test_cdc_wonder_adapter.py::TestIndependentNumericDisclosure` |
+| D10 | The SEER adapter honors `members` filtering, treats `max_member_bytes` as an inspection cap distinct from `sha256_max_bytes`, reports the filename (not `.`) for single-file input, isolates unknown `data_version` keys, and emits an explicit `schema_consistent` flag. | supported | `tests/test_seer_adapter.py` (`TestMembersFilter`, `TestMaxMemberBytesInspectionCap`, `TestSingleFileInput`, `TestDataVersionValidation`, `TestSchemaConsistencyFlag`) |
 
 ### Benchmark / evaluation claims
 
@@ -51,7 +53,7 @@ state changes.
 
 | # | Claim | State | Evidence |
 | --- | --- | --- | --- |
-| K1 | The NHANES 2017-2018 stroke prevalence case study reports a descriptive aggregate output, not a clinical estimate. | supported | `case_studies/nhanes_stroke_2017_2018/results.json`; explicit limitations in `provenance.json` |
+| K1 | The NHANES 2017-2018 stroke prevalence case study reports a descriptive weighted estimate (an applied-survey-weighted prevalence). It is NOT a causal estimate, a diagnostic measure, or clinical decision support, and complex-sampling variance is not implemented in this case study. | supported | `case_studies/nhanes_stroke_2017_2018/results.json`; explicit limitations in `provenance.json` |
 | K2 | The CDC WONDER synthetic-data case study demonstrates the disclosure-checked aggregate workflow: `Deaths <= 9` cells are dropped; `Deaths < 20` cells are flagged `Unreliable`; UCD vs MCD are not combined. | supported | `case_studies/cdc_wonder_synthetic_demo/` (synthetic only); `tests/test_cdc_wonder_synthetic_demo.py` |
 | K3 | The SEER metadata/feasibility case study inspects a synthetic SEER-shaped tree and emits only file-level metadata (no row, no frequency, no unique value). | supported | `case_studies/seer_metadata_feasibility/`; `tests/test_seer_metadata_feasibility.py` |
 | K4 | The CDC WONDER neurology-mortality-trends clinical case study (with real CDC WONDER data) produces disclosure-checked outputs. | needs evidence | Awaiting user sign-off of `manuscript/RESEARCH_CONTRACTS.md` § B and analyst run |

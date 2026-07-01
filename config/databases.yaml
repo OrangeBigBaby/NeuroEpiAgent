@@ -56,6 +56,13 @@ databases:
     label: "Surveillance, Epidemiology, and End Results Program"
     data_type: registry
     status: planned
+    # `status: planned` is the ROUTING/PLANNING status: SEER is not a supported
+    # deterministic-routing or planning-adapter target in the MVP. Separately,
+    # metadata-only inspection of local SEER*Stat exports IS implemented and
+    # supported (SEERAdapter.inspect: header + schema fingerprint + optional
+    # SHA-256, no case rows). Clinical-analysis execution remains not implemented.
+    metadata_inspection: implemented
     notes: >
-      Registry access is out of MVP scope. Adapter planned for tumor-only
-      epidemiology questions.
+      Registry access is out of MVP scope for routing/planning. Metadata-only
+      inspection of authorized local SEER*Stat exports is supported; clinical
+      analysis requires a completed docs/SEER_STUDY_CONTRACT.md.

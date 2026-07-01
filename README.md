@@ -25,10 +25,11 @@ or statistical validity.
 
 | Capability | NHANES | CDC WONDER | SEER | CHARLS |
 | --- | --- | --- | --- | --- |
-| **Planning adapter** | implemented / supported | implemented / supported | implemented / supported | planned / not supported |
+| **Deterministic routing** | supported | n/a (public aggregate) | planned / infeasible | planned / infeasible |
+| **Planning adapter** | implemented / supported | implemented / supported | planned / not supported | planned / not supported |
 | **Metadata inspection** | implemented / supported | implemented / supported | implemented / supported | implemented / supported |
-| **Analysis execution** | light case study only | not in this repo | not in this repo (contract only) | not in this repo |
-| **Publication-ready evidence** | descriptive case study | aggregate + disclosure-checked only | none yet (study contract required) | none |
+| **Clinical analysis execution** | light case study only | not in this repo | not implemented (contract only) | not in this repo |
+| **Publication-ready evidence** | descriptive case study | aggregate + disclosure-checked only | none (study contract required) | none |
 
 "Metadata inspection" means a metadata-only JSON describing the local
 files (sizes, hashes, schema fingerprints, query parameters). It never

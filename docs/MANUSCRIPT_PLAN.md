@@ -75,8 +75,11 @@ unconstrained LLM baseline. Target venue categories below.
    C1–C4. Report what was *not* falsified and any counterexamples found.
 7. **Limitations.** Keyword routing; NHANES scope; registry is a starting
    point, not authoritative; planner still LLM-dependent; no execution/estimate
-   validation; adapter databases not active.
-8. **Future work.** External expert evaluation; CHARLS/GBD/SEER adapters;
+   validation; deterministic routing and planning adapters are NHANES-only
+   (CDC WONDER / SEER / CHARLS are **metadata-inspection only**; their planning
+   adapters and clinical-analysis execution are not active).
+8. **Future work.** External expert evaluation; planning adapters for
+   CHARLS/GBD/SEER (routing today is planned/infeasible for these);
    execution-layer integration with reproducible R/Python templates.
 
 ## Figures and tables (planned; evidence to be generated, not assumed)

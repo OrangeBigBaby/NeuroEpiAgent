@@ -70,9 +70,14 @@ documented:
       longitudinal-coding guardrails; status `planned` → `supported`.
 - [ ] **GBD** — aggregate-burden context layer (no patient-level claims);
       guardrail: "no individual-level inference."
-- [ ] **SEER** — registry; access is out of MVP scope; adapter gated on access
-      and on tumor-only epidemiology guardrails (histology coding, survival
-      time conventions).
+- [~] **SEER** — registry. **Metadata inspection** (`SEERAdapter.inspect`,
+      header + schema fingerprint + optional SHA-256, no case rows) is
+      implemented and supported as of v0.3. The **planning adapter** and
+      **clinical-analysis execution** remain `planned` / not supported — the
+      latter is gated on a completed `docs/SEER_STUDY_CONTRACT.md` and on
+      tumor-only epidemiology guardrails (histology coding, survival-time
+      conventions). Deterministic routing for SEER stays `planned`/infeasible
+      in the MVP router.
 
 Each adapter must ship: a `config/variables/<db>_demo.yaml`, its own
 survey/registry guardrails, and tests showing both a feasible and an infeasible
