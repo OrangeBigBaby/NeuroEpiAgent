@@ -37,12 +37,15 @@ jobs:
         # public Actions log (the raw job log is otherwise auth-gated).
         run: |
           set +e
-          python -m pytest -ra --tb=long --showlocals
+          echo "==== pytest collection summary ===="
+          python -m pytest --collect-only -q 2>&1 | tail -10
+          echo "==== end collection summary ===="
+          python -m pytest -ra --tb=long --showlocals -v
           rc=$?
           if [ $rc -ne 0 ]; then
             echo "==== pytest FAILED with exit code $rc ===="
             echo "Re-running with -v to expose test names:"
-            python -m pytest -ra --tb=long --showlocals -v 2>&1 | tail -200
+            python -m pytest -ra --tb=long --showlocals -v 2>&1 | tail -400
             echo "==== end failure dump ===="
           fi
           exit $rc
