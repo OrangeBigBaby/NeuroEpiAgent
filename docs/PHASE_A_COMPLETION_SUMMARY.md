@@ -11,7 +11,7 @@
 
 ### 1. Generate Sidecar Hash (Fix A)
 ```bash
-cd C:\Users\KlisSu123\Desktop\Nhance\NeuroSurgEpiAgent
+cd <path-to-NeuroSurgEpiAgent>
 python benchmarks/generate_sha256_sidecar.py
 ```
 

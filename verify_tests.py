@@ -4,6 +4,7 @@ Test verification script for PHASE A repairs.
 Run this script to verify all 215 tests pass after repairs.
 """
 
+import os
 import subprocess
 import sys
 
@@ -16,7 +17,7 @@ def main():
     try:
         result = subprocess.run(
             [sys.executable, "-m", "pytest", "-q"],
-            cwd="C:\\Users\\KlisSu123\\Desktop\\Nhance\\NeuroSurgEpiAgent",
+            cwd=os.path.dirname(os.path.abspath(__file__)),
             capture_output=True,
             text=True,
             timeout=120  # 2 minute timeout
