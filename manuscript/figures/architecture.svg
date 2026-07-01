@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="900" height="600">
+<text x="450" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle">NeuroSurgEpiAgent System Architecture</text>
+<text x="450" y="45" font-family="Arial, sans-serif" font-size="12" font-weight="normal" text-anchor="middle">v0.2 Deterministic Gate Implementation</text>
+<rect x="50" y="80" width="180" height="120" fill="#fff4e6" stroke="#9a6700" stroke-width="1"/>
+<text x="140" y="100" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">Router</text>
+<text x="60" y="120" font-family="Arial, sans-serif" font-size="10" font-weight="normal" text-anchor="start">• Keyword pattern matching</text>
+<text x="60" y="138" font-family="Arial, sans-serif" font-size="10" font-weight="normal" text-anchor="start">• Database capability table</text>
+<text x="60" y="156" font-family="Arial, sans-serif" font-size="10" font-weight="normal" text-anchor="start">• Infeasible pattern detection</text>
+<text x="60" y="174" font-family="Arial, sans-serif" font-size="10" font-weight="normal" text-anchor="start">• Conservative refusal</text>
+<rect x="250" y="80" width="180" height="120" fill="#f0e6ff" stroke="#660066" stroke-width="1"/>
+<text x="340" y="100" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">Variable Registry</text>
+<text x="260" y="120" font-family="Arial, sans-serif" font-size="10" font-weight="normal" text-anchor="start">• Versioned YAML registry</text>
+<text x="260" y="138" font-family="Arial, sans-serif" font-size="10" font-weight="normal" text-anchor="start">• Status: verified/illustrative/review</text>
+<text x="260" y="156" font-family="Arial, sans-serif" font-size="10" font-weight="normal" text-anchor="start">• NHANES cycle coverage</text>
+<text x="260" y="174" font-family="Arial, sans-serif" font-size="10" font-weight="normal" text-anchor="start">• Source module tracking</text>
+<rect x="450" y="80" width="180" height="120" fill="#e6f3ff" stroke="#003366" stroke-width="1"/>
+<text x="540" y="100" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">Guardrails</text>
+<text x="460" y="120" font-family="Arial, sans-serif" font-size="10" font-weight="normal" text-anchor="start">• NHANES survey design</text>
+<text x="460" y="138" font-family="Arial, sans-serif" font-size="10" font-weight="normal" text-anchor="start">• Multi-cycle weight rescaling</text>
+<text x="460" y="156" font-family="Arial, sans-serif" font-size="10" font-weight="normal" text-anchor="start">• Fasting subsample weights</text>
+<text x="460" y="174" font-family="Arial, sans-serif" font-size="10" font-weight="normal" text-anchor="start">• Causal language policy</text>
+<rect x="650" y="80" width="180" height="120" fill="#ffffe6" stroke="#999933" stroke-width="1"/>
+<text x="740" y="100" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">Manifest System</text>
+<text x="660" y="120" font-family="Arial, sans-serif" font-size="10" font-weight="normal" text-anchor="start">• Provenance hashing</text>
+<text x="660" y="138" font-family="Arial, sans-serif" font-size="10" font-weight="normal" text-anchor="start">• Findings recording</text>
+<text x="660" y="156" font-family="Arial, sans-serif" font-size="10" font-weight="normal" text-anchor="start">• No numerical results</text>
+<text x="660" y="174" font-family="Arial, sans-serif" font-size="10" font-weight="normal" text-anchor="start">• YAML audit trail</text>
+<line x1="140" y1="200" x2="140" y2="250" stroke="#333333" stroke-width="2.0"/>
+<line x1="340" y1="140" x2="340" y2="250" stroke="#333333" stroke-width="2.0"/>
+<line x1="540" y1="200" x2="540" y2="250" stroke="#333333" stroke-width="2.0"/>
+<line x1="740" y1="200" x2="740" y2="250" stroke="#333333" stroke-width="2.0"/>
+<rect x="50" y="250" width="800" height="80" fill="#f0f8ff" stroke="#003366" stroke-width="1"/>
+<text x="450" y="275" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">Processing Pipeline</text>
+<text x="200" y="295" font-family="Arial, sans-serif" font-size="11" font-weight="normal" text-anchor="middle">Route → Refuse/Plan</text>
+<text x="450" y="295" font-family="Arial, sans-serif" font-size="11" font-weight="normal" text-anchor="middle">Validate → Guardrails</text>
+<text x="700" y="295" font-family="Arial, sans-serif" font-size="11" font-weight="normal" text-anchor="middle">Manifest → Provenance</text>
+<rect x="50" y="380" width="380" height="100" fill="#e8f4e8" stroke="#006633" stroke-width="1"/>
+<text x="240" y="405" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">Analysis Plan Output</text>
+<text x="70" y="425" font-family="Arial, sans-serif" font-size="11" font-weight="normal" text-anchor="start">• Database & cycle selection</text>
+<text x="70" y="442" font-family="Arial, sans-serif" font-size="11" font-weight="normal" text-anchor="start">• Variable mappings with status</text>
+<text x="70" y="459" font-family="Arial, sans-serif" font-size="11" font-weight="normal" text-anchor="start">• Survey design specification</text>
+<text x="70" y="476" font-family="Arial, sans-serif" font-size="11" font-weight="normal" text-anchor="start">• Causal claims (guarded)</text>
+<rect x="470" y="380" width="380" height="100" fill="#ffe6e6" stroke="#cc0000" stroke-width="1"/>
+<text x="660" y="405" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">Error Detection & Reporting</text>
+<text x="490" y="425" font-family="Arial, sans-serif" font-size="11" font-weight="normal" text-anchor="start">• Hard errors (blocking)</text>
+<text x="490" y="442" font-family="Arial, sans-serif" font-size="11" font-weight="normal" text-anchor="start">• Warnings (advisory)</text>
+<text x="490" y="459" font-family="Arial, sans-serif" font-size="11" font-weight="normal" text-anchor="start">• Remediation guidance</text>
+<text x="490" y="476" font-family="Arial, sans-serif" font-size="11" font-weight="normal" text-anchor="start">• Provenance tracking</text>
+<rect x="50" y="520" width="780" height="70" fill="#f9f9f9" stroke="#666666" stroke-width="1"/>
+<text x="70" y="540" font-family="Arial, sans-serif" font-size="12" font-weight="normal" text-anchor="bold">Version Comparison: v0.1 vs v0.2</text>
+<text x="70" y="558" font-family="Arial, sans-serif" font-size="11" font-weight="normal" text-anchor="start">v0.1 (Baseline): 10 model calls, 0% hard-error-free, unconstrained planning</text>
+<text x="70" y="578" font-family="Arial, sans-serif" font-size="11" font-weight="normal" text-anchor="start">v0.2 (Gated): 3 model calls, 70% hard-error-free, deterministic refusal</text>
+</svg>

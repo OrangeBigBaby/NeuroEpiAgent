@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "model": "sonnet",
+    "max_budget_usd_per_call": 0.5,
+    "timeout": 180,
+    "max_tasks": 1,
+    "prompt_hash_a": "b910e00f40753828f13089946e13a12e8e557d1fba0ebbf4aaa647c59d45afc1",
+    "prompt_hash_b": "a3d37c52193eb9a21f186e3215b753b86cceb2a5a28b347460c1efcf6c8ed769",
+    "registry_hash": "d3d66aa464ac14c7aa0c0255583c868138d2b7dd93ab6cba590c820ffc8d90bb",
+    "task_set_hash": "fa547777bd1e349a97d8c603b4043adc90067f2d33b42f113ceff247dcb931b4",
+    "start_time_utc": "2026-06-29T05:09:35.217197+00:00",
+    "status": "completed",
+    "total_tasks": 1,
+    "completed_tasks": 1,
+    "pending_tasks": 1,
+    "dry_run": false,
+    "end_time_utc": "2026-06-29T05:09:35.240292+00:00",
+    "duration_seconds": 0.023094892501831055
+  },
+  "arm_outputs": [
+    {
+      "task_id": "stroke_01",
+      "arm": "arm_a",
+      "provider_type": "claude_code",
+      "model_label": "sonnet",
+      "plan": null,
+      "error": "Unexpected error: '\\n  \"plan\"'",
+      "execution_time_seconds": 0.018093347549438477,
+      "timestamp_utc": "2026-06-29T05:09:35.218204+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": []
+    },
+    {
+      "task_id": "stroke_01",
+      "arm": "arm_b",
+      "provider_type": "claude_code",
+      "model_label": "sonnet",
+      "plan": null,
+      "error": "Unexpected error: '\\n  \"plan\"'",
+      "execution_time_seconds": 0.0009987354278564453,
+      "timestamp_utc": "2026-06-29T05:09:35.236297+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": []
+    }
+  ]
+}

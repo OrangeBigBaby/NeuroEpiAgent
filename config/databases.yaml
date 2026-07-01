@@ -1,0 +1,61 @@
+# Database capability registry for NeuroSurgEpiAgent.
+# registry_version is pinned; bump and update SUPPORTED_*_VERSIONS in the loader
+# when the schema changes. The MVP marks only NHANES as `supported`.
+
+registry_version: "1"
+
+databases:
+
+  NHANES:
+    name: NHANES
+    label: "National Health and Nutrition Examination Survey"
+    data_type: cross-sectional
+    status: supported
+    cycles:
+      - {cycle: "2003-2004", suffix: "C"}
+      - {cycle: "2005-2006", suffix: "D"}
+      - {cycle: "2007-2008", suffix: "E"}
+      - {cycle: "2009-2010", suffix: "F"}
+      - {cycle: "2011-2012", suffix: "G"}
+      - {cycle: "2013-2014", suffix: "H"}
+      - {cycle: "2015-2016", suffix: "I"}
+      - {cycle: "2017-2018", suffix: "J"}
+    survey_design:
+      id_var: SDMVPSU
+      strata_var: SDMVSTRA
+      weight_var: WTMEC2YR
+      nest: true
+      weight_scheme:
+        base_weight: WTMEC2YR
+        rescale_rule: "analysis_weight = WTMEC2YR / (number of 2-year cycles pooled); for the fasting subsample use WTSAF2YR / (number of cycles pooled)"
+    notes: >
+      Cross-sectional household survey with linked mortality. Cannot identify
+      neurosurgical procedures, tumor histology, or inpatient caseload. Stroke
+      and TBI items are self-report; severity/timing are limited.
+
+  CHARLS:
+    name: CHARLS
+    label: "China Health and Retirement Longitudinal Study"
+    data_type: panel
+    status: planned
+    notes: >
+      Adapter scaffolded post-MVP. No active routing or guardrails; flagged for
+      feasibility notes only. Do not treat as a data source in the MVP.
+
+  GBD:
+    name: GBD
+    label: "Global Burden of Disease (regional aggregates)"
+    data_type: aggregate
+    status: planned
+    notes: >
+      Regional burden estimates, not patient-level data. Useful for context and
+      incidence framing; adapter planned post-MVP.
+
+  SEER:
+    name: SEER
+    label: "Surveillance, Epidemiology, and End Results Program"
+    data_type: registry
+    status: planned
+    notes: >
+      Registry access is out of MVP scope. Adapter planned for tumor-only
+      epidemiology questions.

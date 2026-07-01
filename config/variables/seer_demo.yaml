@@ -1,0 +1,94 @@
+# SEER demo variable registry.
+#
+# This is an ILLUSTRATIVE starting point. No entry is marked `verified` for
+# SEER — the public SEER data dictionary is the authoritative source, and a
+# researcher with a SEER DUA must confirm each code against the SEER*Stat
+# session that produced the export.
+#
+# Conventions match config/variables/nhanes_demo.yaml so the planning layer
+# can apply the same rules-engine to SEER entries once a contract is in
+# place. Status is `planned` for every entry until the contract in
+# docs/SEER_STUDY_CONTRACT.md is filled in and the codes are confirmed.
+
+database: SEER
+
+variables:
+  # Cohort / inclusion fields.
+  - name: age_at_diagnosis
+    label: "Age at diagnosis (single-year or recode band, see release)"
+    source_variable: "Age recode with <1 year olds and 90+"
+    status: planned
+    notes: "Confirm which recode was used in the export. The release data dictionary lists all available age recodes."
+
+  - name: sex
+    label: "Sex"
+    source_variable: "Sex"
+    status: planned
+    values_allowed: ["Male", "Female"]
+
+  - name: year_of_diagnosis
+    label: "Year of diagnosis"
+    source_variable: "Year of diagnosis"
+    status: planned
+    notes: "Used as time-zero anchor for survival analyses. See docs/SEER_STUDY_CONTRACT.md."
+
+  - name: race_origin_recode
+    label: "Race and origin recode (NHW, NHB, NHAIAN, NHAPI, Hispanic)"
+    source_variable: "Race and origin recode (NHW, NHB, NHAIAN, NHAPI, Hispanic)"
+    status: planned
+    notes: "Confirm definition against the SEER*Stat session's data dictionary. Multiple recode versions exist."
+
+  # Tumor-defining fields.
+  - name: site_recode_2008
+    label: "Site recode ICD-O-3/WHO 2008"
+    source_variable: "Site recode ICD-O-3/WHO 2008"
+    status: planned
+
+  - name: behavior_code_icdo3
+    label: "Behavior code ICD-O-3"
+    source_variable: "Behavior code ICD-O-3"
+    status: planned
+    notes: "Required to select malignant (3) / in situ (2) / benign (0) cohorts."
+
+  - name: brain_cns_recode
+    label: "SEER Brain and CNS Recode"
+    source_variable: "SEER Brain and CNS Recode"
+    status: planned
+    notes: "Authoritative recode for CNS tumors. Confirm version and release against the export data dictionary."
+
+  - name: histology_icdo3
+    label: "Histologic Type ICD-O-3"
+    source_variable: "Histologic Type ICD-O-3"
+    status: planned
+    notes: "ICD-O-3 morphology code; verify release-specific appendix in the data dictionary."
+
+  # Outcome / survival fields.
+  - name: survival_months
+    label: "Survival months"
+    source_variable: "Survival months"
+    status: planned
+
+  - name: vital_status_recode
+    label: "Vital status recode"
+    source_variable: "Vital status recode"
+    status: planned
+    values_allowed: ["Alive", "Dead"]
+
+  # Filename-level labels (NOT cohort-defining on their own).
+  - name: filename_site_range
+    label: "Literal site range embedded in the export filename"
+    source_variable: "filename pattern (e.g. export_C69-C72.csv)"
+    status: planned
+    notes: "Label only. The export's row contents are NOT constrained to that range. Confirm cohort against Site recode values."
+
+# Required user-supplied data-version fields. These cannot be inferred from
+# the CSV bytes alone; they are collected by SEERAdapter.inspect(data_version=...).
+data_version_required:
+  - release_submission
+  - product_type          # "Research" or "Research Plus"
+  - registry_set
+  - seerstat_version
+  - session_type
+  - export_date
+  - selection_statements
+  - export_data_dictionary

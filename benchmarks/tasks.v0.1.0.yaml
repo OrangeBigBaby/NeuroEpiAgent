@@ -1,0 +1,480 @@
+# NeuroSurgEpiAgent Public-Database Planning Benchmark
+# Frozen Draft Benchmark - Version 0.1.0
+#
+# This file contains the frozen version 0.1.0 of the NeuroSurgEpiAgent benchmark.
+# AUTHORED GOLD ASSERTIONS PENDING INDEPENDENT EXPERT ADJUDICATION
+#
+# WARNING: This benchmark contains draft gold assertions authored by the development team.
+# These assertions have NOT been independently validated by expert adjudicators.
+# This benchmark CANNOT support scientific claims about agent performance, clinical
+# utility, or comparative effectiveness. The draft status is marked by all tasks
+# having review_status='needs_expert_review'. Expert adjudication is required per
+# benchmarks/GOLD_STANDARD_PROCESS.md before this benchmark can be used for
+# scientific evaluation or publication.
+
+schema_version: "1.0"
+benchmark_name: "NeuroSurgEpiAgent Public-Database Planning Benchmark"
+benchmark_version: "0.1.0"
+frozen_timestamp: "2026-06-29T00:00:00Z"
+frozen_by: "NeuroSurgEpiAgent Development Team"
+status: "DRAFT - AUTHORED GOLD ASSERTIONS PENDING INDEPENDENT EXPERT ADJUDICATION"
+
+disclaimer: >
+  This benchmark contains draft gold assertions authored by the development team.
+  These assertions have NOT been independently validated by expert adjudicators.
+  This benchmark CANNOT support scientific claims about agent performance, clinical
+  utility, or comparative effectiveness. The draft status is marked by all tasks
+  having review_status='needs_expert_review'. Expert adjudication is required per
+  benchmarks/GOLD_STANDARD_PROCESS.md before this benchmark can be used for
+  scientific evaluation or publication.
+
+task_count: 30
+domains: ["stroke", "tbi", "tumor", "pituitary", "sah", "hydrocephalus", "spine", "disparities", "global_burden"]
+
+gold_standard_requirements:
+  expert_recruitment: "NOT_COMPLETE - Two independent experts (neurologist/neurosurgeon + epidemiologist) not recruited"
+  adjudication: "NOT_COMPLETE - No expert consensus process has occurred"
+  codebook_verification: "NOT_COMPLETE - Variable codes not independently confirmed against NHANES codebooks"
+  leakage_control: "NOT_COMPLETE - No blinded evaluation run with controlled information flow"
+
+registry_version: "1"
+
+tasks:
+
+  # --------------------------------------------------------------------------- #
+  # STROKE / CEREBROVASCULAR (9 tasks)
+  # --------------------------------------------------------------------------- #
+
+  - id: stroke_metabolic_syndrome
+    domain: stroke
+    question: >
+      Is self-reported stroke history associated with metabolic syndrome components
+      (elevated triglycerides, low HDL, high blood pressure, elevated fasting glucose,
+      increased waist circumference) in US adults, pooling NHANES 2011-2018 data?
+    expected_database: NHANES
+    expected_feasible: true
+    rationale: >
+      NHANES captures stroke self-report (MCQ160F - illustrative) and metabolic
+      syndrome components (BMXBMI for waist, BPXSY1 for BP, LBXGLU for glucose,
+      lipid panel) across cycles G-J. Cross-sectional association is feasible with
+      appropriate survey design.
+    domain_specific_notes: null
+    review_status: needs_expert_review
+    requires_nhanes_codebook: true
+
+  - id: stroke_cognitive_impairment
+    domain: stroke
+    question: >
+      Is stroke history associated with cognitive impairment scores in older adults
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES lacks consistent cross-cycle cognitive assessment batteries comparable
+      across years. No validated cognitive scores available.
+    domain_specific_notes: null
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  - id: stroke_rural_urban_disparities
+    domain: stroke
+    question: >
+      Are there rural-urban disparities in stroke prevalence using NHANES
+      geographic indicators, 2011-2018?
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES geographic identifiers are restricted-access and not in public data.
+      Urban-rural analysis requires special-access data not available in standard release.
+    domain_specific_notes: null
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  - id: stroke_income_inequality
+    domain: stroke
+    question: >
+      Is household income associated with stroke prevalence after adjusting for
+      comorbidities in NHANES 2011-2018?
+    expected_database: NHANES
+    expected_feasible: true
+    rationale: >
+      NHANES has income data (INDFMPIR - illustrative) and stroke self-report
+      (MCQ160F - illustrative). Cross-sectional association is feasible.
+    domain_specific_notes: "Income variable needs confirmation against codebook"
+    review_status: needs_expert_review
+    requires_nhanes_codebook: true
+
+  - id: stroke_smoking_cessation
+    domain: stroke
+    question: >
+      Among former smokers, does time since quitting correlate with stroke
+      prevalence in NHANES 2011-2018?
+    expected_database: NHANES
+    expected_feasible: true
+    rationale: >
+      NHANES has smoking history (SMQ020 - illustrative) and stroke self-report.
+      Time-since-quit derivation may be available in smoking questionnaire.
+    domain_specific_notes: "Smoking cessation variables need codebook confirmation"
+    review_status: needs_expert_review
+    requires_nhanes_codebook: true
+
+  - id: sleep_apnea_stroke
+    domain: stroke
+    question: >
+      Is self-reported sleep apnea associated with stroke prevalence in NHANES?
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      Sleep apnea items vary across NHANES cycles and are not consistently captured.
+      No comparable cross-cycle variable exists.
+    domain_specific_notes: null
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  - id: air_pollution_stroke
+    domain: stroke
+    question: >
+      Is exposure to ambient air pollution associated with stroke incidence
+      using NHANES environmental data linkage?
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      Environmental linkage data requires special access protocols and is not
+      in standard public NHANES files.
+    domain_specific_notes: null
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  - id: diet_quality_stroke
+    domain: stroke
+    question: >
+      Is Healthy Eating Index score associated with stroke prevalence in
+      NHANES 2011-2018 dietary recall data?
+    expected_database: NHANES
+    expected_feasible: true
+    rationale: >
+      NHANES has dietary data and stroke self-report. HEI scores are derivable
+      from dietary recall, but complex derivation requires expert confirmation.
+    domain_specific_notes: "Dietary variables and HEI derivation need expert validation"
+    review_status: needs_expert_review
+    requires_nhanes_codebook: true
+
+  - id: stroke_vaccination_status
+    domain: stroke
+    question: >
+      Is influenza vaccination status associated with stroke prevalence in
+      NHANES 2011-2018?
+    expected_database: NHANES
+    expected_feasible: true
+    rationale: >
+      NHANES has vaccination items (confirm specific variable in MCQ or immunization
+      files). Cross-sectional association with stroke self-report is feasible.
+    domain_specific_notes: "Vaccination variable code needs codebook confirmation"
+    review_status: needs_expert_review
+    requires_nhanes_codebook: true
+
+  # --------------------------------------------------------------------------- #
+  # TRAUMATIC BRAIN INJURY (3 tasks)
+  # --------------------------------------------------------------------------- #
+
+  - id: tbi_lifetime_prevalence
+    domain: tbi
+    question: >
+      What is the lifetime prevalence of traumatic brain injury in US adults
+      using NHANES 2011-2018?
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES lacks a dedicated, comparable TBI item across cycles. No validated
+      cross-cycle TBI variable exists.
+    domain_specific_notes: null
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  - id: tbi_concussion_sports
+    domain: tbi
+    question: >
+      Is sports-related concussion associated with long-term cognitive outcomes
+      in NHANES participants?
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES does not capture concussion history or sports injury data in a
+      consistent cross-cycle format.
+    domain_specific_notes: null
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  - id: tbi_falls_elderly
+    domain: tbi
+    question: >
+      Are fall-related TBIs associated with mortality in elderly NHANES participants?
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES has no mortality linkage for falls or TBI-specific outcomes. No TBI
+      capture in questionnaire.
+    domain_specific_notes: null
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  # --------------------------------------------------------------------------- #
+  # CNS TUMORS (4 tasks)
+  # --------------------------------------------------------------------------- #
+
+  - id: tumor_glioblastoma_survival
+    domain: tumor
+    question: >
+      Glioblastoma survival by extent of resection using US registry data.
+    expected_database: SEER
+    expected_feasible: false
+    rationale: >
+      SEER adapter is planned but not active in MVP. Registry access is beyond
+      MVP scope. No histology data in NHANES.
+    domain_specific_notes: "SEER adapter not implemented; no tumor histology in NHANES"
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  - id: tumor_meningioma_prevalence
+    domain: tumor
+    question: >
+      Is meningioma prevalence captured in NHANES 2011-2018?
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES has no brain tumor histology capture. No benign or malignant CNS
+      tumor prevalence data.
+    domain_specific_notes: null
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  - id: tumor_pituitary_adenoma
+    domain: pituitary
+    question: >
+      Prevalence of pituitary adenoma and hormonal dysfunction in NHANES.
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES has no pituitary tumor capture. Hormonal assays exist but no tumor
+      confirmation data.
+    domain_specific_notes: null
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  - id: tumor_brain_metastasis
+    domain: tumor
+    question: >
+      Frequency of brain metastases from primary lung cancer in NHANES cancer history.
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES has no cancer history or metastasis data. No tumor registry linkage.
+    domain_specific_notes: null
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  # --------------------------------------------------------------------------- #
+  # PITUITARY (2 tasks)
+  # --------------------------------------------------------------------------- #
+
+  - id: pituitary_hormone_replacement
+    domain: pituitary
+    question: >
+      Association between pituitary hormone replacement therapy and quality of life
+      outcomes in NHANES 2011-2018.
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES has no pituitary-specific hormone replacement data or quality of life
+      assessments for pituitary patients. No diagnosis capture.
+    domain_specific_notes: "No pituitary-specific treatment or outcome variables in NHANES"
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  - id: tumor_global_burden_cns
+    domain: tumor
+    question: >
+      Global brain/CNS cancer disability-adjusted life-years by region and year.
+    expected_database: GBD
+    expected_feasible: false
+    rationale: >
+      GBD adapter is planned but not active in MVP. This should route to GBD
+      but be marked infeasible.
+    domain_specific_notes: "GBD adapter not implemented"
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  # --------------------------------------------------------------------------- #
+  # SUBARACHNOID HEMORRHAGE (3 tasks)
+  # --------------------------------------------------------------------------- #
+
+  - id: sah_smoking_risk
+    domain: sah
+    question: >
+      Is cigarette smoking associated with subarachnoid hemorrhage risk in NHANES?
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES stroke item (MCQ160F) does not distinguish hemorrhage subtypes.
+      No SAH-specific capture.
+    domain_specific_notes: "Stroke item not specific to hemorrhage subtype"
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  - id: sah_aneurysm_screening
+    domain: sah
+    question: >
+      Prevalence of unruptured intracranial aneurysms in NHANES imaging studies.
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES has no brain imaging or aneurysm screening. No vascular anomaly data.
+    domain_specific_notes: null
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  - id: sah_alcohol_consumption
+    domain: sah
+    question: >
+      Association between alcohol consumption and SAH using NHANES dietary and
+      stroke data.
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES stroke item does not distinguish SAH from other stroke types.
+      Cannot analyze SAH-specific associations.
+    domain_specific_notes: "No SAH-specific outcome variable"
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  # --------------------------------------------------------------------------- #
+  # HYDROCEPHALUS (2 tasks)
+  # --------------------------------------------------------------------------- #
+
+  - id: hydro_adult_prevalence
+    domain: hydrocephalus
+    question: >
+      Prevalence of adult hydrocephalus in NHANES 2011-2018.
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES has no hydrocephalus capture. No shunt status or ventricular size data.
+    domain_specific_notes: null
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  - id: hydro_pediatric_outcomes
+    domain: hydrocephalus
+    question: >
+      Long-term cognitive outcomes after pediatric hydrocephalus surgery.
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES has no pediatric surgery history, no hydrocephalus capture, and no
+      longitudinal follow-up.
+    domain_specific_notes: null
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  # --------------------------------------------------------------------------- #
+  # SPINE / SPINAL DISORDERS (3 tasks)
+  # --------------------------------------------------------------------------- #
+
+  - id: spine_degenerative_disease
+    domain: spine
+    question: >
+      Prevalence of degenerative spinal disease in NHANES 2011-2018 musculoskeletal data.
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES has limited musculoskeletal assessment and no spine-specific diagnosis
+      capture. No radiculopathy or myelopathy data.
+    domain_specific_notes: null
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  - id: spine_fracture_osteoporosis
+    domain: spine
+    question: >
+      Association between osteoporosis and vertebral fractures in NHANES bone density data.
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES has DXA data but no vertebral fracture assessment. No spine imaging data.
+    domain_specific_notes: null
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  - id: spine_disability_outcomes
+    domain: spine
+    question: >
+      Spinal stenosis prevalence and disability outcomes in NHANES.
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES has no spinal diagnosis capture or specific disability assessment for
+      spinal conditions.
+    domain_specific_notes: null
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  # --------------------------------------------------------------------------- #
+  # DISPARITIES / SOCIAL DETERMINANTS (2 tasks)
+  # --------------------------------------------------------------------------- #
+
+  - id: disparities_race_stroke
+    domain: disparities
+    question: >
+      Racial disparities in stroke prevalence between non-Hispanic Black and
+      White adults in NHANES 2011-2018.
+    expected_database: NHANES
+    expected_feasible: true
+    rationale: >
+      NHANES has race/ethnicity data (RIDRETH1 - illustrative) and stroke self-report
+      (MCQ160F - illustrative). Cross-sectional disparity analysis is feasible with
+      survey design adjustments.
+    domain_specific_notes: "Race coding and sample size for subgroup analysis needs expert review"
+    review_status: needs_expert_review
+    requires_nhanes_codebook: true
+
+  - id: disparities_education_outcomes
+    domain: disparities
+    question: >
+      Association between education level and stroke prevalence in NHANES 2011-2018.
+    expected_database: NHANES
+    expected_feasible: true
+    rationale: >
+      NHANES has education data (confirm variable in DEMO) and stroke self-report.
+      Cross-sectional association is feasible.
+    domain_specific_notes: "Education variable code needs codebook confirmation"
+    review_status: needs_expert_review
+    requires_nhanes_codebook: true
+
+  # --------------------------------------------------------------------------- #
+  # GLOBAL BURDEN / TRENDS (2 tasks)
+  # --------------------------------------------------------------------------- #
+
+  - id: global_stroke_trends
+    domain: global_burden
+    question: >
+      Temporal trends in stroke incidence by country and region, 2000-2020.
+    expected_database: GBD
+    expected_feasible: false
+    rationale: >
+      GBD adapter is planned but not active in MVP. Should route to GBD but be
+      marked infeasible.
+    domain_specific_notes: "GBD adapter not implemented"
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false
+
+  - id: global_pediatric_neurosurgery
+    domain: global_burden
+    question: >
+      Burden of pediatric neurosurgical disease in low- and middle-income countries.
+    expected_database: GBD
+    expected_feasible: false
+    rationale: >
+      GBD adapter is planned but not active in MVP. Pediatric-specific neurosurgical
+      burden requires specialized GBD parsing not available in MVP.
+    domain_specific_notes: "GBD adapter not implemented; pediatric subcategory analysis not available"
+    review_status: needs_expert_review
+    requires_nhanes_codebook: false

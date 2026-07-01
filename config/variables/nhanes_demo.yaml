@@ -1,0 +1,148 @@
+# Illustrative NHANES variable registry for NeuroSurgEpiAgent.
+#
+# `status` is mandatory for every entry and is the only thing that tells the
+# engine whether a codebook stem is ground truth:
+#   verified     - stable, universally documented NHANES stems (design + core DEMO).
+#   illustrative - correct shape/format, but the team must confirm against the
+#                  specific cycle's codebook before any reported result.
+#   needs review - placeholder; the engine blocks plans that use it.
+#
+# This file contains NO invented PMIDs and NO fabricated values. ref_notes point
+# at the NHANES codebook / variable search, not at papers.
+
+registry_version: "1"
+
+variables:
+
+  # --- Survey design (verified, stable across cycles) ---------------------
+  - name: sdmvpsu
+    label: "Masked variance pseudo-PSU"
+    source_variable: SDMVPSU
+    source_module: DEMO
+    units: integer
+    status: verified
+    nhanes_cycles: ["C", "D", "E", "F", "G", "H", "I", "J"]
+    ref_notes: "NHANES design variable, documented in every cycle DEMO codebook."
+
+  - name: sdmvstra
+    label: "Masked variance strata"
+    source_variable: SDMVSTRA
+    source_module: DEMO
+    units: integer
+    status: verified
+    nhanes_cycles: ["C", "D", "E", "F", "G", "H", "I", "J"]
+    ref_notes: "NHANES design variable, documented in every cycle DEMO codebook."
+
+  - name: mec_weight
+    label: "MEC exam weight (2-year)"
+    source_variable: WTMEC2YR
+    source_module: DEMO
+    units: weight
+    status: verified
+    nhanes_cycles: ["C", "D", "E", "F", "G", "H", "I", "J"]
+    ref_notes: "Rescale by number of cycles pooled. Fasting labs use WTSAF2YR instead."
+
+  # --- Core demographics (verified) ---------------------------------------
+  - name: age
+    label: "Age in years at screening"
+    source_variable: RIDAGEYR
+    source_module: DEMO
+    units: years
+    status: verified
+    nhanes_cycles: ["C", "D", "E", "F", "G", "H", "I", "J"]
+    ref_notes: "Core DEMO variable; cap at 80 ('top-coded') in older cycles."
+
+  - name: sex
+    label: "Gender"
+    source_variable: RIAGENDR
+    source_module: DEMO
+    units: categorical
+    status: verified
+    nhanes_cycles: ["C", "D", "E", "F", "G", "H", "I", "J"]
+    ref_notes: "1=Male, 2=Female."
+
+  - name: race
+    label: "Race/Hispanic origin"
+    source_variable: RIDRETH1
+    source_module: DEMO
+    units: categorical
+    status: illustrative
+    nhanes_cycles: ["C", "D", "E", "F", "G", "H", "I", "J"]
+    ref_notes: "RIDRETH1 is the long-standing recode; confirm against the target cycle codebook (RIDRETH3 also exists in later cycles)."
+
+  # --- Body measures (illustrative - confirm stems per cycle) -------------
+  - name: bmi
+    label: "Body mass index (kg/m^2)"
+    source_variable: BMXBMI
+    source_module: BMX
+    units: kg/m^2
+    status: illustrative
+    nhanes_cycles: ["C", "D", "E", "F", "G", "H", "I", "J"]
+    ref_notes: "Confirm BMX file availability per cycle."
+
+  - name: waist
+    label: "Waist circumference"
+    source_variable: BMXWAIST
+    source_module: BMX
+    units: cm
+    status: illustrative
+    nhanes_cycles: ["C", "D", "E", "F", "G", "H", "I", "J"]
+    ref_notes: "Confirm BMX file availability per cycle."
+
+  # --- Blood pressure (illustrative) --------------------------------------
+  - name: sbp
+    label: "Systolic blood pressure, 1st reading"
+    source_variable: BPXSY1
+    source_module: BPX
+    units: mmHg
+    status: illustrative
+    nhanes_cycles: ["C", "D", "E", "F", "G", "H", "I", "J"]
+    ref_notes: "Confirm BPX file availability and reading convention per cycle."
+
+  # --- Self-reported conditions (illustrative; confirm item per cycle) -----
+  - name: smoke_ever
+    label: "Smoked at least 100 cigarettes in life"
+    source_variable: SMQ020
+    source_module: SMQ
+    units: categorical
+    status: illustrative
+    nhanes_cycles: ["C", "D", "E", "F", "G", "H", "I", "J"]
+    ref_notes: "Confirm item wording per cycle; coding historically 1=Yes/2=No."
+
+  - name: stroke_ever
+    label: "Ever told had a stroke"
+    source_variable: MCQ160F
+    source_module: MCQ
+    units: categorical
+    status: illustrative
+    nhanes_cycles: ["C", "D", "E", "F", "G", "H", "I", "J"]
+    ref_notes: "Self-report, no date/severity; confirm item exists in target cycle MCQ file."
+
+  # --- Fasting-subsample labs (illustrative; require WTSAF2YR) ------------
+  - name: fasting_glucose
+    label: "Fasting glucose (morning subsample)"
+    source_variable: LBXGLU
+    source_module: LAB
+    units: mg/dL
+    status: illustrative
+    nhanes_cycles: ["G", "H", "I", "J"]
+    ref_notes: "Confirm stem and units in the target cycle's glucose file; fasting labs need WTSAF2YR."
+
+  - name: insulin
+    label: "Fasting insulin (morning subsample)"
+    source_variable: LBXINS
+    source_module: LAB
+    units: uU/mL
+    status: illustrative
+    nhanes_cycles: ["G", "H", "I", "J"]
+    ref_notes: "Confirm stem/units in target cycle; fasting labs need WTSAF2YR."
+
+  # --- Placeholder (needs review) - kept to demonstrate the blocker -------
+  - name: tbi_history
+    label: "Traumatic brain injury history"
+    source_variable: TBD_CONFIRM_ITEM
+    source_module: MCQ
+    units: categorical
+    status: needs review
+    nhanes_cycles: []
+    ref_notes: "NHANES has no dedicated, comparable TBI item across cycles; this placeholder intentionally fails the guardrail."

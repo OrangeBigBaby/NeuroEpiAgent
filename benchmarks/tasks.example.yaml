@@ -1,0 +1,149 @@
+# Blinded benchmark task set for NeuroSurgEpiAgent.
+# Each task is a free-text research question plus the EXPECTED deterministic
+# behaviour of the MVP. These are authoring/feasibility checks, not clinical
+# ground truth - the "expected" fields encode routing + guardrail policy, and
+# deliberately include infeasible items so the agent must refuse or caveat.
+
+registry_version: "1"
+
+tasks:
+
+  - id: stroke_01
+    domain: stroke
+    question: >
+      Is self-reported stroke history in US adults associated with metabolic
+      syndrome components, pooling NHANES 2011-2018?
+    expected_database: NHANES
+    expected_feasible: true
+    rationale: >
+      NHANES includes self-reported stroke questions and measured metabolic
+      syndrome components (waist circumference, blood pressure, fasting glucose,
+      triglycerides, HDL) across multiple cycles, enabling cross-sectional analysis.
+    expected_caveat_contains: ["self-report", "cross-sectional"]
+    guardrail_focus:
+      - multi_cycle_weight_rescale
+      - survey_design_vars
+
+  - id: stroke_02
+    domain: stroke
+    question: >
+      Does laparoscopic bariatric surgery reduce 5-year stroke recurrence?
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES has no procedure/surgery data; infeasible. The survey does not
+      capture longitudinal surgical records or follow-up for outcomes like
+      stroke recurrence after procedures.
+    expected_reason: "NHANES has no procedure/surgery data; infeasible."
+    guardrail_focus:
+      - feasibility_refusal
+
+  - id: stroke_03
+    domain: stroke
+    question: >
+      Stroke prevalence by sarcopenia status, adults 60+, NHANES 2013-2018.
+    expected_database: NHANES
+    expected_feasible: true
+    rationale: >
+      NHANES includes stroke self-report questions and sufficient anthropometric
+      data (grip strength, gait speed, DXA scans in some cycles) to operationalize
+      FNIH sarcopenia definitions for adults 60+.
+    expected_caveat_contains: ["self-report", "FNIH"]
+    guardrail_focus:
+      - sarcopenia_definition_note
+
+  - id: tbi_01
+    domain: tbi
+    question: >
+      Lifetime prevalence of traumatic brain injury in US adults, NHANES.
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES lacks a comparable cross-cycle TBI item. While some cycles include
+      injury-related questions, there is no consistent TBI-specific measure
+      across the survey years.
+    expected_reason: "NHANES lacks a comparable cross-cycle TBI item."
+    guardrail_focus:
+      - variable_status_needs_review
+
+  - id: tbi_02
+    domain: tbi
+    question: >
+      Regional TBI incidence by age band (aggregate burden).
+    expected_database: GBD
+    expected_feasible: false
+    rationale: >
+      GBD adapter is planned, not active in MVP. The current implementation
+      supports NHANES only; GBD integration is deferred.
+    expected_reason: "GBD adapter is planned, not active in MVP."
+    guardrail_focus:
+      - planned_adapter_refusal
+
+  - id: tbi_03
+    domain: tbi
+    question: >
+      Post-concussion cognitive trajectories in older adults.
+    expected_database: CHARLS
+    expected_feasible: false
+    rationale: >
+      CHARLS adapter is planned, not active in MVP. The current implementation
+      supports NHANES only; international cohort integration is deferred.
+    expected_reason: "CHARLS adapter is planned, not active in MVP."
+    guardrail_focus:
+      - planned_adapter_refusal
+
+  - id: tumor_01
+    domain: tumor
+    question: >
+      Glioblastoma survival by extent of resection, US registry data.
+    expected_database: SEER
+    expected_feasible: false
+    rationale: >
+      SEER adapter is planned; registry access out of MVP scope. The current
+      implementation focuses on NHANES public health survey data, not
+      cancer registry outcomes.
+    expected_reason: "SEER adapter is planned; registry access out of MVP scope."
+    guardrail_focus:
+      - planned_adapter_refusal
+
+  - id: tumor_02
+    domain: tumor
+    question: >
+      Is meningioma prevalence captured in NHANES?
+    expected_database: NHANES
+    expected_feasible: false
+    rationale: >
+      NHANES has no brain-tumor histology capture. The survey includes general
+      cancer history questions but does not capture specific brain tumor
+      subtypes like meningioma.
+    expected_reason: "NHANES has no brain-tumor histology capture."
+    guardrail_focus:
+      - feasibility_refusal
+
+  - id: tumor_03
+    domain: tumor
+    question: >
+      Global brain/CNS cancer disability-adjusted life-years by region.
+    expected_database: GBD
+    expected_feasible: false
+    rationale: >
+      GBD adapter is planned, not active in MVP. The current implementation
+      supports NHANES only; global burden of disease integration is deferred.
+    expected_reason: "GBD adapter is planned, not active in MVP."
+    guardrail_focus:
+      - planned_adapter_refusal
+
+  - id: cross_01
+    domain: stroke
+    question: >
+      Fasting glucose and insulin resistance (HOMA-IR) association with
+      self-reported stroke, NHANES 2011-2014.
+    expected_database: NHANES
+    expected_feasible: true
+    rationale: >
+      NHANES includes fasting glucose, insulin (for HOMA-IR calculation), and
+      self-reported stroke in the 2011-2014 cycles. Fasting subsample weights
+      (WTSAF2YR) are available for appropriate variance estimation.
+    expected_caveat_contains: ["fasting", "WTSAF2YR"]
+    guardrail_focus:
+      - fasting_subsample_weight

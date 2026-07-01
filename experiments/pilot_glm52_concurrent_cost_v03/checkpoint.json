@@ -1,0 +1,2384 @@
+{
+  "completed_tasks": [
+    "cross_01",
+    "stroke_01",
+    "stroke_02",
+    "tbi_02",
+    "tbi_03",
+    "tumor_01",
+    "tumor_02"
+  ],
+  "metadata": {},
+  "arm_outputs": [
+    {
+      "task_id": "stroke_01",
+      "arm": "arm_a",
+      "provider_type": "claude_code",
+      "model_label": "claude-sonnet-4-6",
+      "plan": {
+        "title": "Self-reported stroke history and metabolic syndrome components in US adults, NHANES 2011-2018",
+        "question": "Is self-reported stroke history in US adults associated with metabolic syndrome components, pooling NHANES 2011-2018?",
+        "database": "NHANES",
+        "cycles": [
+          "G",
+          "H",
+          "I",
+          "J"
+        ],
+        "feasible": true,
+        "outcome": {
+          "name": "stroke_ever",
+          "label": "Ever told had a stroke",
+          "source_variable": "MCQ160F",
+          "source_module": "MCQ",
+          "units": null,
+          "transform": "binary (Yes vs No/Refused/Don't know recoded to No/missing)",
+          "status": "illustrative",
+          "nhanes_cycles": [
+            "G",
+            "H",
+            "I",
+            "J"
+          ],
+          "ref_notes": null
+        },
+        "exposures": [
+          {
+            "name": "waist",
+            "label": "Waist circumference",
+            "source_variable": "BMXWAIST",
+            "source_module": "BMX",
+            "units": "cm",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "sbp",
+            "label": "Systolic blood pressure (1st reading)",
+            "source_variable": "BPXSY1",
+            "source_module": "BPX",
+            "units": "mmHg",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "fasting_glucose",
+            "label": "Fasting serum glucose",
+            "source_variable": "LBXGLU",
+            "source_module": "LAB",
+            "units": "mg/dL",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "insulin",
+            "label": "Fasting serum insulin",
+            "source_variable": "LBXINS",
+            "source_module": "LAB",
+            "units": "uU/mL",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "bmi",
+            "label": "Body mass index",
+            "source_variable": "BMXBMI",
+            "source_module": "BMX",
+            "units": "kg/m^2",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          }
+        ],
+        "covariates": [
+          {
+            "name": "age",
+            "label": "Age in years at screening",
+            "source_variable": "RIDAGEYR",
+            "source_module": "DEMO",
+            "units": "years",
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "sex",
+            "label": "Gender",
+            "source_variable": "RIAGENDR",
+            "source_module": "DEMO",
+            "units": null,
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "race",
+            "label": "Race/Hispanic origin",
+            "source_variable": "RIDRETH1",
+            "source_module": "DEMO",
+            "units": null,
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "smoke_ever",
+            "label": "Smoked at least 100 cigarettes in life",
+            "source_variable": "SMQ020",
+            "source_module": "SMQ",
+            "units": null,
+            "transform": "binary",
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          }
+        ],
+        "uses_fasting_subsample": true,
+        "design_vars": {
+          "id": "SDMVPSU",
+          "strata": "SDMVSTRA",
+          "weight": "WTMEC2YR/4"
+        },
+        "steps": [
+          {
+            "step": "1",
+            "description": "Merge NHANES cycles G, H, I, J (2011-2018) on SEQN and restrict to adults (RIDAGEYR >= 20).",
+            "outputs": [
+              "pooled adult analytic file"
+            ]
+          },
+          {
+            "step": "2",
+            "description": "Define outcome as self-reported stroke (MCQ160F == 1 vs No).",
+            "outputs": [
+              "binary stroke indicator"
+            ]
+          },
+          {
+            "step": "3",
+            "description": "Construct metabolic syndrome component variables: waist circumference, systolic BP, fasting glucose, fasting insulin, BMI; harmonize units across cycles.",
+            "outputs": [
+              "harmonized exposure variables"
+            ]
+          },
+          {
+            "step": "4",
+            "description": "Restrict glucose/insulin analyses to the fasting subsample (morning examination session); for combined-sample components (waist, SBP, BMI) use the full MEC sample.",
+            "outputs": [
+              "fasting and full-MEC analytic subsets"
+            ]
+          },
+          {
+            "step": "5",
+            "description": "Apply survey design: PSU = SDMVPSU, strata = SDMVSTRA; use combined 8-year MEC weight (WTMEC2YR/4) for non-fasting components, or the combined fasting subsample weight for glucose/insulin models.",
+            "outputs": [
+              "weighted design specification"
+            ]
+          },
+          {
+            "step": "6",
+            "description": "Fit survey-weighted logistic regression of stroke on each metabolic component individually, then a multivariable model adjusting for age, sex, race, smoking.",
+            "outputs": [
+              "crude and adjusted odds ratios"
+            ]
+          },
+          {
+            "step": "7",
+            "description": "Report weighted prevalence of stroke and adjusted odds ratios with 95% CIs; conduct sensitivity analysis restricting to adults >=40 to reduce sparse stroke events in younger ages.",
+            "outputs": [
+              "primary estimates and sensitivity analysis"
+            ]
+          }
+        ],
+        "causal_claims": [
+          "Cross-sectional design likely precludes temporal ordering; associations between self-reported stroke history and metabolic syndrome components suggest correlation but cannot establish causation.",
+          "Pooling 2011-2018 may increase precision but assumes stable associations across cycles.",
+          "Self-reported stroke is subject to recall and survivor bias, which may attenuate or distort associations."
+        ],
+        "rationale": "NHANES is explicitly requested and feasible. MCQ160F maps directly to self-reported stroke history (the outcome), available across cycles G-J. Metabolic syndrome components are covered by BMX (waist, BMI), BPX (SBP), and the fasting LAB module (glucose LBXGLU, insulin LBXINS); HDL and triglycerides are not present in the registry and are therefore omitted. Cycles are limited to G-J because fasting glucose/insulin are only registered for those cycles and because they correspond to 2011-2018. The analysis is cross-sectional, consistent with the NHANES design.",
+        "guardrail_notes": "The fasting subsample (morning session) requires the fasting-specific weight (WTSAF2YR/4 in the pooled file), which is not listed in the registry; WTMEC2YR is shown for non-fasting components only and must not be used for fasting glucose/insulin models. Stroke (MCQ160F) is a self-report item without timing or severity; reverse causation and survival bias are plausible. HDL-cholesterol and triglycerides are part of metabolic syndrome but are absent from the registry, so the metabolic syndrome construct here is partial. TBI_history (TBD_CONFIRM_ITEM) is flagged needs review with no cycles and is excluded."
+      },
+      "error": null,
+      "execution_time_seconds": 49.21293067932129,
+      "timestamp_utc": "2026-06-30T23:41:20.686346+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [
+        {
+          "severity": "error",
+          "code": "FASTING_WEIGHT_MISMATCH",
+          "message": "Fasting subsample selected but weight base is not WTSAF2YR.",
+          "remediation": "Fasting labs require WTSAF2YR, not WTMEC2YR."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'stroke_ever' (MCQ160F) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'waist' (BMXWAIST) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'sbp' (BPXSY1) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'fasting_glucose' (LBXGLU) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'insulin' (LBXINS) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'bmi' (BMXBMI) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'race' (RIDRETH1) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'smoke_ever' (SMQ020) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        }
+      ],
+      "call_telemetry": {
+        "model_call_attempted": true,
+        "input_tokens": 3039,
+        "output_tokens": 3157,
+        "cache_read_input_tokens": 65536,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.0777924,
+        "duration_ms": 47682,
+        "duration_api_ms": 48806,
+        "num_turns": 3,
+        "session_id": "fc83f72c-268c-4fdf-8c90-0976bdc1889c",
+        "estimated_cost_usd": null
+      },
+      "reused": false
+    },
+    {
+      "task_id": "stroke_01",
+      "arm": "arm_b",
+      "provider_type": "claude_code",
+      "model_label": "claude-sonnet-4-6",
+      "plan": {
+        "title": "Association of Self-Reported Stroke History with Metabolic Syndrome Components in US Adults, NHANES 2011-2018",
+        "question": "Is self-reported stroke history in US adults associated with metabolic syndrome components, pooling NHANES 2011-2018?",
+        "database": "NHANES",
+        "cycles": [
+          "G",
+          "H",
+          "I",
+          "J"
+        ],
+        "feasible": true,
+        "outcome": {
+          "name": "stroke_history",
+          "label": "Self-reported history of stroke (ever told)",
+          "source_variable": "MCQ160F",
+          "source_module": "MCQ",
+          "units": null,
+          "transform": "Binary: 1 = yes (Don't Know/Refused set to missing)",
+          "status": "illustrative",
+          "nhanes_cycles": [
+            "G",
+            "H",
+            "I",
+            "J"
+          ],
+          "ref_notes": "Derived from MCQ160F: 'Ever told had a stroke'; 9/Refused coded missing"
+        },
+        "exposures": [
+          {
+            "name": "waist_circumference",
+            "label": "Waist circumference",
+            "source_variable": "BMXWAIST",
+            "source_module": "BMX",
+            "units": "cm",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": "Elevated WC: men >102 cm, women >88 cm"
+          },
+          {
+            "name": "triglycerides",
+            "label": "Serum triglycerides (fasting)",
+            "source_variable": "LBXTR",
+            "source_module": "LAB (Triglycerides)",
+            "units": "mg/dL",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": "Elevated: >=150 mg/dL; on fasting subsample only"
+          },
+          {
+            "name": "hdl_cholesterol",
+            "label": "Serum HDL cholesterol",
+            "source_variable": "LBDHDD",
+            "source_module": "LAB (HDL)",
+            "units": "mg/dL",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": "Reduced: men <40, women <50 mg/dL"
+          },
+          {
+            "name": "blood_pressure_systolic",
+            "label": "Systolic blood pressure (mean of readings)",
+            "source_variable": "BPXSY1",
+            "source_module": "BPX",
+            "units": "mmHg",
+            "transform": "mean of up to 3 valid readings (BPXSY1-3)",
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": "Elevated: SBP >=130 mmHg or treated; component of MetS"
+          },
+          {
+            "name": "blood_pressure_diastolic",
+            "label": "Diastolic blood pressure (mean of readings)",
+            "source_variable": "BPXDI1",
+            "source_module": "BPX",
+            "units": "mmHg",
+            "transform": "mean of up to 3 valid readings (BPXDI1-3)",
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": "Elevated: DBP >=85 mmHg or treated; component of MetS"
+          },
+          {
+            "name": "fasting_glucose",
+            "label": "Fasting plasma glucose",
+            "source_variable": "LBXGLU",
+            "source_module": "LAB (Glucose, fasting)",
+            "units": "mg/dL",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": "Elevated: >=100 mg/dL; on fasting subsample only"
+          },
+          {
+            "name": "hba1c",
+            "label": "HbA1c",
+            "source_variable": "LBXGH",
+            "source_module": "LAB (GHB)",
+            "units": "%",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": "Included as complementary glycemia marker in full-sample analyses"
+          }
+        ],
+        "covariates": [
+          {
+            "name": "age",
+            "label": "Age at screening (years)",
+            "source_variable": "RIDAGEYR",
+            "source_module": "DEMO",
+            "units": "years",
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "sex",
+            "label": "Sex",
+            "source_variable": "RIAGENDR",
+            "source_module": "DEMO",
+            "units": null,
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "race_ethnicity",
+            "label": "Race/Hispanic origin",
+            "source_variable": "RIDRETH1",
+            "source_module": "DEMO",
+            "units": null,
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "pir",
+            "label": "Poverty income ratio",
+            "source_variable": "INDFMPIR",
+            "source_module": "DEMO",
+            "units": "ratio",
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "smoking",
+            "label": "Smoked at least 100 cigarettes in life",
+            "source_variable": "SMQ020",
+            "source_module": "SMQ",
+            "units": null,
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "alcohol",
+            "label": "Drinks per day on drinking days",
+            "source_variable": "ALQ130",
+            "source_module": "ALQ",
+            "units": "drinks/day",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "physical_activity",
+            "label": "Physical activity (weekly MET-min recreational)",
+            "source_variable": "PAQMET",
+            "source_module": "PAQ",
+            "units": "MET-min/week",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": "Computed MET summary variable (PAQMET); available across cycles"
+          }
+        ],
+        "uses_fasting_subsample": true,
+        "design_vars": {
+          "id": "SDMVPSU",
+          "strata": "SDMVSTRA",
+          "weight": "WTSAF2YR/4"
+        },
+        "steps": [
+          {
+            "step": "1",
+            "description": "Download and append DEMO, MCQ, BMX, BPX, and relevant LAB files for cycles G (2011-12), H (2013-14), I (2015-16), J (2017-18); create a cycle indicator",
+            "outputs": [
+              "Pooled analytic dataset"
+            ]
+          },
+          {
+            "step": "2",
+            "description": "Restrict to adults >=20 years with non-missing MCQ160F; exclude Don't Know/Refused (7/9) on stroke item",
+            "outputs": [
+              "Analytic sample"
+            ]
+          },
+          {
+            "step": "3",
+            "description": "Derive each MetS component and its dichotomous abnormal flag (waist: sex-specific; TG >=150; HDL sex-specific low; BP SBP>=130 or DBP>=85 or antihypertensive; fasting glucose >=100 or on hypoglycemic Rx)",
+            "outputs": [
+              "MetS components and abnormal indicators"
+            ]
+          },
+          {
+            "step": "4",
+            "description": "Restrict to fasting subsample (WTSAF2YR>0) for analyses involving TG/fasting glucose or full MetS score",
+            "outputs": [
+              "Fasting subsample analytic dataset"
+            ]
+          },
+          {
+            "step": "5",
+            "description": "Apply survey design: WTSAF2YR/4 as weight, SDMVSTRA as strata, SDMVPSU as PSU; set missing for out-of-range values",
+            "outputs": [
+              "Survey-set design object"
+            ]
+          },
+          {
+            "step": "6",
+            "description": "Fit survey-weighted logistic regression of stroke_history on each MetS component and on the MetS count/score, adjusting for age, sex, race/ethnicity, PIR, smoking, alcohol, physical activity",
+            "outputs": [
+              "Adjusted odds ratios with 95% CIs"
+            ]
+          },
+          {
+            "step": "7",
+            "description": "Conduct sensitivity analyses on the full (non-fasting) sample using HbA1c, HDL, WC, BP components only; report missingness and multiple-imputation sensitivity analysis",
+            "outputs": [
+              "Sensitivity results"
+            ]
+          }
+        ],
+        "causal_claims": [
+          "Cross-sectional association between each MetS component and self-reported stroke history may be estimated.",
+          "Causal direction cannot be established because NHANES is cross-sectional for this question; temporality is ambiguous and reverse causation is plausible.",
+          "Findings are associative and likely subject to residual confounding and survival bias, since only surviving stroke survivors can self-report history."
+        ],
+        "rationale": "NHANES 2011-2018 (cycles G, H, I, J) collects self-reported stroke history (MCQ160F) and all five harmonized metabolic syndrome components (waist circumference, fasting triglycerides, HDL, blood pressure, fasting glucose), making the association analyzable. The fasting subsample is required because triglycerides and fasting glucose are only measured there, so WTSAF2YR (divided by 4 for pooled cycles) is the correct analytic weight. Restricted to adults >=20 years for MetS criteria. Status marked 'illustrative' pending codebook confirmation.",
+        "guardrail_notes": "Metabolic syndrome per ATP/NHLBI harmonized criteria requires >=3 of 5 abnormal components (WC, TG, HDL, BP, fasting glucose); TG and fasting glucose are measured only on the fasting subsample, so a true MetS diagnosis requires WTSAF2YR weighting and reduces sample size. Self-reported stroke is subject to misclassification and survival bias (fatal strokes are unobserved). Hypertension medication and glucose-lowering medication status (e.g., BPQ050A, DIQ070) should be considered when classifying elevated BP/glucose components. Pooling 4 cycles (2011-2018) requires dividing WTSAF2YR by 4; verify SDMVSTRA/SDMVPSU coding is consistent across cycles. NHANES-LATIN variable names (LBXTR, LBXGLU, LBDHDD, LBXGH) are illustrative and should be confirmed against NHANES codebooks for each cycle."
+      },
+      "error": null,
+      "execution_time_seconds": 41.41810846328735,
+      "timestamp_utc": "2026-06-30T23:42:09.899277+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'stroke_history' (MCQ160F) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'waist_circumference' (BMXWAIST) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'triglycerides' (LBXTR) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'hdl_cholesterol' (LBDHDD) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'blood_pressure_systolic' (BPXSY1) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'blood_pressure_diastolic' (BPXDI1) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'fasting_glucose' (LBXGLU) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'hba1c' (LBXGH) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'smoking' (SMQ020) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'alcohol' (ALQ130) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'physical_activity' (PAQMET) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        }
+      ],
+      "call_telemetry": {
+        "model_call_attempted": true,
+        "input_tokens": 41,
+        "output_tokens": 2544,
+        "cache_read_input_tokens": 32512,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.0487082,
+        "duration_ms": 39677,
+        "duration_api_ms": 41068,
+        "num_turns": 2,
+        "session_id": "7555d631-f449-41eb-95ad-5f43e2f9ee39",
+        "estimated_cost_usd": null
+      },
+      "reused": false
+    },
+    {
+      "task_id": "stroke_02",
+      "arm": "arm_a",
+      "provider_type": "deterministic_router",
+      "model_label": null,
+      "plan": {
+        "title": "Feasibility assessment: stroke_02",
+        "question": "Does laparoscopic bariatric surgery reduce 5-year stroke recurrence?\n",
+        "database": "NHANES",
+        "cycles": [],
+        "feasible": false,
+        "outcome": null,
+        "exposures": [],
+        "covariates": [],
+        "uses_fasting_subsample": false,
+        "design_vars": {},
+        "steps": [
+          {
+            "step": "1",
+            "description": "Deterministic routing assessment: NHANES has no procedure/surgery data",
+            "outputs": [
+              "feasibility_refusal"
+            ]
+          }
+        ],
+        "causal_claims": [],
+        "rationale": "NHANES has no procedure/surgery data",
+        "guardrail_notes": "Deterministic router: NHANES - NHANES has no procedure/surgery data"
+      },
+      "error": null,
+      "execution_time_seconds": 0.0,
+      "timestamp_utc": "2026-06-30T23:42:51.321379+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [],
+      "call_telemetry": {
+        "model_call_attempted": false,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.0,
+        "duration_ms": null,
+        "duration_api_ms": null,
+        "num_turns": null,
+        "session_id": null,
+        "estimated_cost_usd": 0.0
+      },
+      "reused": false
+    },
+    {
+      "task_id": "stroke_02",
+      "arm": "arm_b",
+      "provider_type": "claude_code",
+      "model_label": "claude-sonnet-4-6",
+      "plan": {
+        "title": "Infeasible: 5-year stroke recurrence after bariatric surgery cannot be assessed in NHANES",
+        "question": "Does laparoscopic bariatric surgery reduce 5-year stroke recurrence?",
+        "database": "NHANES",
+        "cycles": [
+          "G",
+          "H",
+          "I",
+          "J"
+        ],
+        "feasible": false,
+        "outcome": {
+          "name": "stroke_recurrence_5yr",
+          "label": "5-year stroke recurrence",
+          "source_variable": "N/A",
+          "source_module": "N/A",
+          "units": null,
+          "transform": null,
+          "status": "needs review",
+          "nhanes_cycles": [],
+          "ref_notes": "No longitudinal follow-up in NHANES; stroke items (e.g., MCQ160F) capture ever-told prevalent history, not incident recurrence."
+        },
+        "exposures": [
+          {
+            "name": "laparoscopic_bariatric_surgery",
+            "label": "Laparoscopic bariatric surgery",
+            "source_variable": "N/A",
+            "source_module": "N/A",
+            "units": null,
+            "transform": null,
+            "status": "needs review",
+            "nhanes_cycles": [],
+            "ref_notes": "NHANES lacks a surgical history / procedure module; bariatric surgery (and approach: laparoscopic vs open) is not recorded."
+          }
+        ],
+        "covariates": [],
+        "uses_fasting_subsample": false,
+        "design_vars": {
+          "id": "SDMVPSU",
+          "strata": "SDMVSTRA",
+          "weight": "WTMEC2YR/4"
+        },
+        "steps": [
+          {
+            "step": "1",
+            "description": "Not applicable; neither the 5-year stroke recurrence outcome nor the laparoscopic bariatric surgery exposure is available in NHANES, and the cross-sectional design precludes longitudinal follow-up.",
+            "outputs": []
+          }
+        ],
+        "causal_claims": [
+          "No causal claim can be supported: NHANES is cross-sectional and cannot observe 5-year stroke recurrence."
+        ],
+        "rationale": "Infeasible for NHANES. (1) NHANES is a repeated cross-sectional survey with no long-term longitudinal follow-up, so a 5-year stroke recurrence outcome cannot be measured; stroke items (e.g., MCQ160F) capture prevalent ever-told history, not incident recurrence over time. (2) Bariatric surgery is not directly captured - there is no procedure/surgical history module, and the laparoscopic vs open approach is never recorded. (3) Even with proxies, the cross-sectional design with no follow-up precludes any 5-year recurrence analysis. A prospective cohort or linked claims/EHR data is required.",
+        "guardrail_notes": "Do not attempt to substitute stroke prevalence (MCQ160F) or BMI/weight loss as proxies - these cannot answer a longitudinal recurrence question and would yield misleading associations. Recommend an alternative data source with longitudinal follow-up (clinical registry, claims data, or bariatric surgery cohort such as SOS) rather than NHANES."
+      },
+      "error": null,
+      "execution_time_seconds": 38.23610830307007,
+      "timestamp_utc": "2026-06-30T23:42:51.321379+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [],
+      "call_telemetry": {
+        "model_call_attempted": true,
+        "input_tokens": 1514,
+        "output_tokens": 1843,
+        "cache_read_input_tokens": 98048,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.062268,
+        "duration_ms": 36369,
+        "duration_api_ms": 38535,
+        "num_turns": 4,
+        "session_id": "23a067f8-f070-49eb-a325-253129396e7f",
+        "estimated_cost_usd": null
+      },
+      "reused": false
+    },
+    {
+      "task_id": "stroke_03",
+      "arm": "arm_a",
+      "provider_type": "claude_code",
+      "model_label": "claude-sonnet-4-6",
+      "plan": null,
+      "error": "[claude_result_invalid_json] Claude result field is not valid JSON",
+      "execution_time_seconds": 45.813103914260864,
+      "timestamp_utc": "2026-06-30T23:43:29.562486+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [],
+      "call_telemetry": {
+        "model_call_attempted": true,
+        "input_tokens": 2395,
+        "output_tokens": 2685,
+        "cache_read_input_tokens": 65984,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.0691422,
+        "duration_ms": 44010,
+        "duration_api_ms": 44955,
+        "num_turns": 2,
+        "session_id": "68f15326-b75a-4b6c-a06c-4505fa7d9d39",
+        "estimated_cost_usd": null
+      },
+      "reused": false
+    },
+    {
+      "task_id": "stroke_03",
+      "arm": "arm_b",
+      "provider_type": "claude_code",
+      "model_label": "claude-sonnet-4-6",
+      "plan": {
+        "title": "Self-reported stroke prevalence by derived sarcopenia status among adults aged 60+, NHANES 2013-2018",
+        "question": "Stroke prevalence by sarcopenia status, adults 60+, NHANES 2013-2018.",
+        "database": "NHANES",
+        "cycles": [
+          "H",
+          "I",
+          "J"
+        ],
+        "feasible": true,
+        "outcome": {
+          "name": "stroke_ever",
+          "label": "Ever told had a stroke",
+          "source_variable": "MCQ160F",
+          "source_module": "MCQ",
+          "units": null,
+          "transform": "binary 1=yes, 0=no; set refused/don't know to missing",
+          "status": "verified",
+          "nhanes_cycles": [
+            "H",
+            "I",
+            "J"
+          ],
+          "ref_notes": "Cross-sectional self-report; cannot distinguish incident vs prevalent stroke."
+        },
+        "exposures": [
+          {
+            "name": "sarcopenia",
+            "label": "Sarcopenia status (derived)",
+            "source_variable": "ASM/height^2 (DXXOFM,DXXOLM) + MGXGS1R/MGXGSDRS",
+            "source_module": "DXA+MGX",
+            "units": "categorical",
+            "transform": "Define low ASM/height^2 using FNIH or EWGSOP2 sex-specific thresholds combined with low grip strength; sensitivity analyses using each component alone are suggested.",
+            "status": "needs review",
+            "nhanes_cycles": [
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": "Composite derived measure; operationalization requires reviewer choice of consensus cut-points. Likely a minority of adults 60+ meet criteria, so small cell counts may limit sub-strata precision."
+          }
+        ],
+        "covariates": [
+          {
+            "name": "age",
+            "label": "Age in years",
+            "source_variable": "RIDAGEYR",
+            "source_module": "DEMO",
+            "units": "years",
+            "transform": "keep >=60",
+            "status": "verified",
+            "nhanes_cycles": [
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": "Restrict to RIDAGEYR >= 60."
+          },
+          {
+            "name": "sex",
+            "label": "Sex",
+            "source_variable": "RIAGENDR",
+            "source_module": "DEMO",
+            "units": null,
+            "transform": "1=male,2=female",
+            "status": "verified",
+            "nhanes_cycles": [
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": "Needed for sex-specific sarcopenia cut-points."
+          },
+          {
+            "name": "race_eth",
+            "label": "Race/Hispanic origin",
+            "source_variable": "RIDRETH3",
+            "source_module": "DEMO",
+            "units": null,
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "bmi",
+            "label": "Body mass index",
+            "source_variable": "BMXBMI",
+            "source_module": "BMX",
+            "units": "kg/m2",
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": "May mediate or confound lean mass-outcome relation."
+          },
+          {
+            "name": "pir",
+            "label": "Poverty-income ratio",
+            "source_variable": "INDFMPIR",
+            "source_module": "DEMO",
+            "units": "ratio",
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "diabetes",
+            "label": "Diabetes (ever told)",
+            "source_variable": "MCQ010",
+            "source_module": "MCQ",
+            "units": null,
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "hypertension",
+            "label": "Ever had hypertension",
+            "source_variable": "BPQ020",
+            "source_module": "BPQ",
+            "units": null,
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "smoking",
+            "label": "Smoking status",
+            "source_variable": "SMQ020",
+            "source_module": "SMQ",
+            "units": null,
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          }
+        ],
+        "uses_fasting_subsample": false,
+        "design_vars": {
+          "id": "SDMVPSU",
+          "strata": "SDMVSTRA",
+          "weight": "WTMEC2YR/3"
+        },
+        "steps": [
+          {
+            "step": "1",
+            "description": "Append NHANES 2013-14, 2015-16, 2017-18 (DEMO, MCQ, MGX, DXA, BMX, BPQ, SMQ); restrict to RIDAGEYR >= 60.",
+            "outputs": [
+              "analysis_dataframe"
+            ]
+          },
+          {
+            "step": "2",
+            "description": "Derive sarcopenia: compute ASM/height^2 from DXA appendicular lean mass (DXXOFM, DXXOLM) and apply sex-specific low-lean-mass threshold; combine with low grip strength (max of MGXGS1R/2R across hands) using FNIH or EWGSOP2 cut-points.",
+            "outputs": [
+              "sarcopenia_binary"
+            ]
+          },
+          {
+            "step": "3",
+            "description": "Define stroke_ever from MCQ160F (1=yes); set Don't Know/Refused to missing.",
+            "outputs": [
+              "stroke_binary"
+            ]
+          },
+          {
+            "step": "4",
+            "description": "Apply survey design: weight = WTMEC2YR/3, strata SDMVSTRA, PSU SDMVPSU; account for masked variance units.",
+            "outputs": [
+              "svydesign_object"
+            ]
+          },
+          {
+            "step": "5",
+            "description": "Estimate weighted stroke prevalence (with 95% CI) overall and by sarcopenia status; test difference across groups (Rao-Scott chi-square).",
+            "outputs": [
+              "prevalence_table"
+            ]
+          },
+          {
+            "step": "6",
+            "description": "Fit survey-weighted logistic regression of stroke_ever on sarcopenia, adjusting for age, sex, race/ethnicity, BMI, PIR, smoking, diabetes, hypertension; report adjusted OR and 95% CI.",
+            "outputs": [
+              "adjusted_OR"
+            ]
+          },
+          {
+            "step": "7",
+            "description": "Sensitivity analyses: (a) alternate sarcopenia definition (lean-mass only vs combined); (b) complete-case vs multiple imputation for DXA/grip missingness.",
+            "outputs": [
+              "sensitivity_results"
+            ]
+          }
+        ],
+        "causal_claims": [
+          "Sarcopenia is associated with higher odds of self-reported stroke in a cross-sectional, survey-weighted analysis.",
+          "Causation cannot be inferred: stroke may precede or contribute to sarcopenia (reverse causation), and residual confounding is plausible."
+        ],
+        "rationale": "Question is feasible in NHANES 2013-2018 (cycles H/I/J). Stroke is captured by MCQ160F (self-reported ever-stroke). Sarcopenia is not directly measured in NHANES; it must be derived from DXA appendicular skeletal muscle mass (DXXOFM/DXXOLM divided by height squared) combined with grip strength (MGX module). Gait speed, the third component of full EWGSOP2 criteria, was not collected in 2013-2018, so the derived sarcopenia indicator is necessarily simplified (ASM + grip strength) and should be treated as 'needs review' pending choice of consensus cut-points (FNIH vs EWGSOP2). The analysis is restricted to adults aged >=60 per the question.",
+        "guardrail_notes": "Sarcopenia is NOT a coded NHANES variable and must be constructed from DXA appendicular lean mass plus grip strength; gait speed (third EWGSOP2 criterion) was NOT collected in 2013-2018, so a full EWGSOP2 definition is infeasible and a simplified/likely definition must be used. DXA data carry missingness and were not collected on all participants, reducing analytic sample size; if DXA-specific weights exist, sensitivity analyses using them are suggested. Stroke is self-reported and subject to recall/survivor bias, and cross-sectional data preclude temporal ordering (reverse causation likely). Combining three 2-year cycles requires WTMEC2YR/3 with masked variance PSUs/strata; verify domain sample sizes before reporting subgroup estimates."
+      },
+      "error": null,
+      "execution_time_seconds": 43.59089970588684,
+      "timestamp_utc": "2026-06-30T23:44:15.375590+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [
+        {
+          "severity": "error",
+          "code": "UNRESOLVED_VARIABLE",
+          "message": "Variable 'sarcopenia' (ASM/height^2 (DXXOFM,DXXOLM) + MGXGS1R/MGXGSDRS) is status 'needs review'.",
+          "remediation": "Confirm the codebook stem against the NHANES release before analysis."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'diabetes' (MCQ010) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        }
+      ],
+      "call_telemetry": {
+        "model_call_attempted": true,
+        "input_tokens": 102,
+        "output_tokens": 2469,
+        "cache_read_input_tokens": 32448,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.047749,
+        "duration_ms": 41819,
+        "duration_api_ms": 42872,
+        "num_turns": 2,
+        "session_id": "029cf3eb-2f39-483c-98fe-d7424c60a59a",
+        "estimated_cost_usd": null
+      },
+      "reused": false
+    },
+    {
+      "task_id": "tbi_01",
+      "arm": "arm_a",
+      "provider_type": "deterministic_router",
+      "model_label": null,
+      "plan": {
+        "title": "Feasibility assessment: tbi_01",
+        "question": "Lifetime prevalence of traumatic brain injury in US adults, NHANES.\n",
+        "database": "NHANES",
+        "cycles": [],
+        "feasible": false,
+        "outcome": null,
+        "exposures": [],
+        "covariates": [],
+        "uses_fasting_subsample": false,
+        "design_vars": {},
+        "steps": [
+          {
+            "step": "1",
+            "description": "Deterministic routing assessment: The request did not match a known comparable cross-cycle NHANES TBI history item.",
+            "outputs": [
+              "feasibility_refusal"
+            ]
+          }
+        ],
+        "causal_claims": [],
+        "rationale": "The request did not match a known comparable cross-cycle NHANES TBI history item.",
+        "guardrail_notes": "Deterministic router: NHANES - The request did not match a known comparable cross-cycle NHANES TBI history item."
+      },
+      "error": null,
+      "execution_time_seconds": 0.0,
+      "timestamp_utc": "2026-06-30T23:44:58.971491+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [],
+      "call_telemetry": {
+        "model_call_attempted": false,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.0,
+        "duration_ms": null,
+        "duration_api_ms": null,
+        "num_turns": null,
+        "session_id": null,
+        "estimated_cost_usd": 0.0
+      },
+      "reused": false
+    },
+    {
+      "task_id": "tbi_01",
+      "arm": "arm_b",
+      "provider_type": "claude_code",
+      "model_label": "claude-sonnet-4-6",
+      "plan": null,
+      "error": "[claude_validation_error] Claude output does not validate as AnalysisPlan: 1 validation error for AnalysisPlan\noutcome.name\n  Field required [type=missing, input_value={'label': 'Lifetime traum...m': None, 'units': None}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.10/v/missing",
+      "execution_time_seconds": 41.12402415275574,
+      "timestamp_utc": "2026-06-30T23:44:58.971491+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [],
+      "call_telemetry": {
+        "model_call_attempted": true,
+        "input_tokens": 1134,
+        "output_tokens": 1283,
+        "cache_read_input_tokens": 97920,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.0526886,
+        "duration_ms": 39318,
+        "duration_api_ms": 40094,
+        "num_turns": 4,
+        "session_id": "3d32c65c-6695-4363-972b-b0b17b38ea4a",
+        "estimated_cost_usd": null
+      },
+      "reused": false
+    },
+    {
+      "task_id": "tbi_02",
+      "arm": "arm_a",
+      "provider_type": "deterministic_router",
+      "model_label": null,
+      "plan": {
+        "title": "Feasibility assessment: tbi_02",
+        "question": "Regional TBI incidence by age band (aggregate burden).\n",
+        "database": "GBD",
+        "cycles": [],
+        "feasible": false,
+        "outcome": null,
+        "exposures": [],
+        "covariates": [],
+        "uses_fasting_subsample": false,
+        "design_vars": {},
+        "steps": [
+          {
+            "step": "1",
+            "description": "Deterministic routing assessment: GBD matches a regional/global aggregate-burden question but its adapter is PLANNED.",
+            "outputs": [
+              "feasibility_refusal"
+            ]
+          }
+        ],
+        "causal_claims": [],
+        "rationale": "GBD matches a regional/global aggregate-burden question but its adapter is PLANNED.",
+        "guardrail_notes": "Deterministic router: GBD - GBD matches a regional/global aggregate-burden question but its adapter is PLANNED."
+      },
+      "error": null,
+      "execution_time_seconds": 0.0009999275207519531,
+      "timestamp_utc": "2026-06-30T23:45:40.101512+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [],
+      "call_telemetry": {
+        "model_call_attempted": false,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.0,
+        "duration_ms": null,
+        "duration_api_ms": null,
+        "num_turns": null,
+        "session_id": null,
+        "estimated_cost_usd": 0.0
+      },
+      "reused": false
+    },
+    {
+      "task_id": "tbi_02",
+      "arm": "arm_b",
+      "provider_type": "claude_code",
+      "model_label": "claude-sonnet-4-6",
+      "plan": {
+        "title": "Regional TBI incidence by age band (aggregate burden)",
+        "question": "Regional TBI incidence by age band (aggregate burden).",
+        "database": "NHANES",
+        "cycles": [],
+        "feasible": false,
+        "outcome": {
+          "name": "tbi_incidence",
+          "label": "Traumatic brain injury incidence",
+          "source_variable": "NONE",
+          "source_module": "NONE",
+          "units": null,
+          "transform": null,
+          "status": "needs review",
+          "nhanes_cycles": [],
+          "ref_notes": "Not available in NHANES; no module captures TBI events, date, or severity"
+        },
+        "exposures": [],
+        "covariates": [],
+        "uses_fasting_subsample": false,
+        "design_vars": {
+          "id": "SDMVPSU",
+          "strata": "SDMVSTRA",
+          "weight": "WTMEC2YR/4"
+        },
+        "steps": [],
+        "causal_claims": [],
+        "rationale": "NHANES cannot answer this question. It is a cross-sectional health examination survey of the US civilian noninstitutionalized population and does not capture TBI (traumatic brain injury) incidence: no item records head injury events, date of injury, or severity. TBI incidence requires event-based surveillance (CDC NEISS, state TBI registries, hospital discharge/ED datasets such as HCUP). Additionally, NHANES is nationally representative and the public files do not support 'regional' estimates below the four Census regions. No valid outcome, exposure, or analysis design can be constructed.",
+        "guardrail_notes": "NHANES measures prevalence of chronic conditions and risk factors, not injury incidence. For TBI burden by region/age, redirect to CDC surveillance (NEISS, HCUP SID/NIS, state TBI registries). Do not proxy TBI using cognitive test batteries (DSST, CERAD) in NHANES - not diagnostic of TBI and would introduce substantial outcome misclassification."
+      },
+      "error": null,
+      "execution_time_seconds": 30.034701108932495,
+      "timestamp_utc": "2026-06-30T23:45:40.102513+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [],
+      "call_telemetry": {
+        "model_call_attempted": true,
+        "input_tokens": 1152,
+        "output_tokens": 1333,
+        "cache_read_input_tokens": 97984,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.053493799999999994,
+        "duration_ms": 28282,
+        "duration_api_ms": 29909,
+        "num_turns": 4,
+        "session_id": "a2e07d78-8b9d-4661-86f1-76f6f15a73e4",
+        "estimated_cost_usd": null
+      },
+      "reused": false
+    },
+    {
+      "task_id": "tbi_03",
+      "arm": "arm_a",
+      "provider_type": "deterministic_router",
+      "model_label": null,
+      "plan": {
+        "title": "Feasibility assessment: tbi_03",
+        "question": "Post-concussion cognitive trajectories in older adults.\n",
+        "database": "CHARLS",
+        "cycles": [],
+        "feasible": false,
+        "outcome": null,
+        "exposures": [],
+        "covariates": [],
+        "uses_fasting_subsample": false,
+        "design_vars": {},
+        "steps": [
+          {
+            "step": "1",
+            "description": "Deterministic routing assessment: CHARLS matches an older-adult longitudinal cognitive question but its adapter is planned.",
+            "outputs": [
+              "feasibility_refusal"
+            ]
+          }
+        ],
+        "causal_claims": [],
+        "rationale": "CHARLS matches an older-adult longitudinal cognitive question but its adapter is planned.",
+        "guardrail_notes": "Deterministic router: CHARLS - CHARLS matches an older-adult longitudinal cognitive question but its adapter is planned."
+      },
+      "error": null,
+      "execution_time_seconds": 0.0,
+      "timestamp_utc": "2026-06-30T23:46:10.142445+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [],
+      "call_telemetry": {
+        "model_call_attempted": false,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.0,
+        "duration_ms": null,
+        "duration_api_ms": null,
+        "num_turns": null,
+        "session_id": null,
+        "estimated_cost_usd": 0.0
+      },
+      "reused": false
+    },
+    {
+      "task_id": "tbi_03",
+      "arm": "arm_b",
+      "provider_type": "claude_code",
+      "model_label": "claude-sonnet-4-6",
+      "plan": {
+        "title": "Post-concussion cognitive trajectories in older adults",
+        "question": "Post-concussion cognitive trajectories in older adults.",
+        "database": "NHANES",
+        "cycles": [
+          "G",
+          "H",
+          "I",
+          "J"
+        ],
+        "feasible": false,
+        "outcome": {
+          "name": "cfddata_cog",
+          "label": "Cognitive function (DSST/CFT) - illustrative",
+          "source_variable": "CFDSDC",
+          "source_module": "CFQ",
+          "units": "score",
+          "transform": null,
+          "status": "needs review",
+          "nhanes_cycles": [
+            "H",
+            "I",
+            "J"
+          ],
+          "ref_notes": "Single time point per participant; CFQ administered to adults >=60 in select cycles only."
+        },
+        "exposures": [
+          {
+            "name": "mcq_concussion",
+            "label": "History of concussion/head injury - illustrative",
+            "source_variable": "MCQ170M/MCQ210",
+            "source_module": "MCQ",
+            "units": null,
+            "transform": null,
+            "status": "needs review",
+            "nhanes_cycles": [
+              "G",
+              "H",
+              "I",
+              "J"
+            ],
+            "ref_notes": "Retrospective self-report; lacks reliable injury dating; not a defined post-injury cohort."
+          }
+        ],
+        "covariates": [],
+        "uses_fasting_subsample": false,
+        "design_vars": {
+          "id": "SDMVPSU",
+          "strata": "SDMVSTRA",
+          "weight": "WTMEC2YR/4"
+        },
+        "steps": [
+          {
+            "step": "1",
+            "description": "Recognize that NHANES is cross-sectional and cannot support trajectory analysis",
+            "outputs": [
+              "feasible=false determination"
+            ]
+          },
+          {
+            "step": "2",
+            "description": "Consider alternative longitudinal cohorts (e.g., NHATS, ADAMS, TRACK-TBI, UK Biobank) for trajectory analysis",
+            "outputs": [
+              "alternative cohort recommendations"
+            ]
+          }
+        ],
+        "causal_claims": [
+          "NHANES cannot estimate post-concussion cognitive trajectories because it does not longitudinally follow individuals after injury."
+        ],
+        "rationale": "The question requires repeated measurement of cognition over time following a concussion (a trajectory), which demands longitudinal follow-up. NHANES is a repeated cross-sectional survey: different individuals are sampled each cycle, and the same person is not followed across cycles. NHANES also lacks a well-defined 'post-concussion' cohort with dated injury and subsequent cognitive re-assessment. The CFQ cognitive module (DSST, CERAD, animal fluency) captures only a single time point per participant and only in certain cycles for adults >=60. NHANES concussion/head-injury history items (e.g., MCQ170M 'ever told you had ... concussion', MCQ210 head injury/LOC) are retrospective self-report without injury dating sufficient to establish a post-injury temporal sequence. Therefore a trajectory design is infeasible.",
+        "guardrail_notes": "NHANES may support a related but distinct cross-sectional question, e.g., whether self-reported lifetime concussion/head injury is associated with concurrent cognitive test performance in older adults (one time point, not a trajectory). If that cross-sectional association is acceptable, feasibility could be revisited; but trajectories over time are not possible in NHANES. Recommend a longitudinal cohort (e.g., NHATS, ADAMS, TRACK-TBI, or brain-health biobanks) instead."
+      },
+      "error": null,
+      "execution_time_seconds": 35.07709050178528,
+      "timestamp_utc": "2026-06-30T23:46:10.142445+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [],
+      "call_telemetry": {
+        "model_call_attempted": true,
+        "input_tokens": 798,
+        "output_tokens": 1375,
+        "cache_read_input_tokens": 64960,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.04315859999999999,
+        "duration_ms": 33281,
+        "duration_api_ms": 35058,
+        "num_turns": 3,
+        "session_id": "0e0c3a17-d299-4ced-803b-b34682ee461a",
+        "estimated_cost_usd": null
+      },
+      "reused": false
+    },
+    {
+      "task_id": "tumor_01",
+      "arm": "arm_a",
+      "provider_type": "deterministic_router",
+      "model_label": null,
+      "plan": {
+        "title": "Feasibility assessment: tumor_01",
+        "question": "Glioblastoma survival by extent of resection, US registry data.\n",
+        "database": "SEER",
+        "cycles": [],
+        "feasible": false,
+        "outcome": null,
+        "exposures": [],
+        "covariates": [],
+        "uses_fasting_subsample": false,
+        "design_vars": {},
+        "steps": [
+          {
+            "step": "1",
+            "description": "Deterministic routing assessment: SEER matches a CNS-tumor registry/survival question but its adapter is planned.",
+            "outputs": [
+              "feasibility_refusal"
+            ]
+          }
+        ],
+        "causal_claims": [],
+        "rationale": "SEER matches a CNS-tumor registry/survival question but its adapter is planned.",
+        "guardrail_notes": "Deterministic router: SEER - SEER matches a CNS-tumor registry/survival question but its adapter is planned."
+      },
+      "error": null,
+      "execution_time_seconds": 0.001005411148071289,
+      "timestamp_utc": "2026-06-30T23:46:45.225533+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [],
+      "call_telemetry": {
+        "model_call_attempted": false,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.0,
+        "duration_ms": null,
+        "duration_api_ms": null,
+        "num_turns": null,
+        "session_id": null,
+        "estimated_cost_usd": 0.0
+      },
+      "reused": false
+    },
+    {
+      "task_id": "tumor_01",
+      "arm": "arm_b",
+      "provider_type": "claude_code",
+      "model_label": "claude-sonnet-4-6",
+      "plan": {
+        "title": "Glioblastoma survival by extent of resection",
+        "question": "Glioblastoma survival by extent of resection, US registry data.",
+        "database": "NHANES",
+        "cycles": [],
+        "feasible": false,
+        "outcome": {
+          "name": "gbm_survival",
+          "label": "Glioblastoma overall survival (not available in NHANES)",
+          "source_variable": "N/A",
+          "source_module": "N/A",
+          "units": "months",
+          "transform": null,
+          "status": "needs review",
+          "nhanes_cycles": [],
+          "ref_notes": "Not collected in NHANES. Available in SEER/NCDB as vital status and survival months."
+        },
+        "exposures": [],
+        "covariates": [],
+        "uses_fasting_subsample": false,
+        "design_vars": {
+          "id": "SDMVPSU",
+          "strata": "SDMVSTRA",
+          "weight": "WTMEC2YR"
+        },
+        "steps": [],
+        "causal_claims": [],
+        "rationale": "Infeasible for NHANES. NHANES is a cross-sectional nutrition and health examination survey of the civilian, non-institutionalized US population; it does not capture cancer incidence, histology-specific tumors such as glioblastoma, surgical extent of resection, or survival/follow-up outcomes. The appropriate data sources are population-based cancer registries: the NCI SEER Program (Surveillance, Epidemiology, and End Results), the NCDB (National Cancer Database), or state cancer registries, which record tumor site/histology (ICD-O-3), extent of resection (e.g., SEER surgery codes), and vital status with survival time. Suggest redirecting the analysis to SEER or NCDB.",
+        "guardrail_notes": "NHANES cannot support this question. Recommend SEER or NCDB as the source database; survival analysis would require Kaplan-Meier and Cox proportional hazards models with extent of resection as the exposure, adjusted for age, KPS, IDH status, adjuvant therapy, and tumor location."
+      },
+      "error": null,
+      "execution_time_seconds": 33.729355573654175,
+      "timestamp_utc": "2026-06-30T23:46:45.226538+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [],
+      "call_telemetry": {
+        "model_call_attempted": true,
+        "input_tokens": 983,
+        "output_tokens": 1242,
+        "cache_read_input_tokens": 97920,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.0516316,
+        "duration_ms": 32052,
+        "duration_api_ms": 33792,
+        "num_turns": 4,
+        "session_id": "85d7ccd1-941c-4c12-9181-5ff484ebea96",
+        "estimated_cost_usd": null
+      },
+      "reused": false
+    },
+    {
+      "task_id": "tumor_02",
+      "arm": "arm_a",
+      "provider_type": "deterministic_router",
+      "model_label": null,
+      "plan": {
+        "title": "Feasibility assessment: tumor_02",
+        "question": "Is meningioma prevalence captured in NHANES?\n",
+        "database": "NHANES",
+        "cycles": [],
+        "feasible": false,
+        "outcome": null,
+        "exposures": [],
+        "covariates": [],
+        "uses_fasting_subsample": false,
+        "design_vars": {},
+        "steps": [
+          {
+            "step": "1",
+            "description": "Deterministic routing assessment: NHANES has no brain-tumor histology capture",
+            "outputs": [
+              "feasibility_refusal"
+            ]
+          }
+        ],
+        "causal_claims": [],
+        "rationale": "NHANES has no brain-tumor histology capture",
+        "guardrail_notes": "Deterministic router: NHANES - NHANES has no brain-tumor histology capture"
+      },
+      "error": null,
+      "execution_time_seconds": 0.0009748935699462891,
+      "timestamp_utc": "2026-06-30T23:47:18.961925+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [],
+      "call_telemetry": {
+        "model_call_attempted": false,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.0,
+        "duration_ms": null,
+        "duration_api_ms": null,
+        "num_turns": null,
+        "session_id": null,
+        "estimated_cost_usd": 0.0
+      },
+      "reused": false
+    },
+    {
+      "task_id": "tumor_02",
+      "arm": "arm_b",
+      "provider_type": "claude_code",
+      "model_label": "claude-sonnet-4-6",
+      "plan": {
+        "title": "Feasibility of meningioma prevalence ascertainment in NHANES",
+        "question": "Is meningioma prevalence captured in NHANES?",
+        "database": "NHANES",
+        "cycles": [
+          "G",
+          "H",
+          "I",
+          "J"
+        ],
+        "feasible": false,
+        "outcome": {
+          "name": "meningioma",
+          "label": "Meningioma diagnosis",
+          "source_variable": "N/A",
+          "source_module": "N/A",
+          "units": null,
+          "transform": null,
+          "status": "needs review",
+          "nhanes_cycles": [],
+          "ref_notes": "NHANES cancer items cover selected site-specific malignancies (breast, cervical, prostate, colorectal, skin, bladder, thyroid) and do not include meningioma or CNS/benign brain tumors."
+        },
+        "exposures": [],
+        "covariates": [],
+        "uses_fasting_subsample": false,
+        "design_vars": {
+          "id": "SDMVPSU",
+          "strata": "SDMVSTRA",
+          "weight": "WTMEC2YR/4"
+        },
+        "steps": [
+          {
+            "step": "1",
+            "description": "Confirm via NHANES question/codebook search that no item captures meningioma or general intracranial/benign brain tumor diagnosis; NHANES cancer items are limited to site-specific malignancies (e.g., breast, cervical, prostate, colorectal, skin, bladder, thyroid) and do not include meningioma or other CNS tumors.",
+            "outputs": []
+          }
+        ],
+        "causal_claims": [
+          "No causal or associative claim can be made; the exposure/outcome is not ascertained in NHANES."
+        ],
+        "rationale": "Meningioma (typically a benign CNS tumor) is not captured in NHANES. The Medical Conditions (MCQ) and cancer modules ask about selected malignancies and broad chronic conditions but lack any item on meningioma, brain tumors, or non-malignant intracranial neoplasms. NHANES also conducts no neuroimaging that would incidentally detect asymptomatic meningioma. Therefore prevalence of meningioma cannot be estimated from NHANES; an alternative data source such as CBTRUS or cancer registry/SEER data would be required.",
+        "guardrail_notes": "NHANES is a general-population health and nutrition survey and is not designed for ascertainment of CNS tumors, which are predominantly diagnosed via imaging/histopathology rather than self-report. Any cancer-related variables present are site-limited and would miss meningioma."
+      },
+      "error": null,
+      "execution_time_seconds": 38.03963112831116,
+      "timestamp_utc": "2026-06-30T23:47:18.962899+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [],
+      "call_telemetry": {
+        "model_call_attempted": true,
+        "input_tokens": 1348,
+        "output_tokens": 1671,
+        "cache_read_input_tokens": 98048,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.059191,
+        "duration_ms": 36202,
+        "duration_api_ms": 37861,
+        "num_turns": 4,
+        "session_id": "d8584a13-c805-4de4-b8c7-aadfb175cc40",
+        "estimated_cost_usd": null
+      },
+      "reused": false
+    },
+    {
+      "task_id": "tumor_03",
+      "arm": "arm_a",
+      "provider_type": "deterministic_router",
+      "model_label": null,
+      "plan": {
+        "title": "Feasibility assessment: tumor_03",
+        "question": "Global brain/CNS cancer disability-adjusted life-years by region.\n",
+        "database": "GBD",
+        "cycles": [],
+        "feasible": false,
+        "outcome": null,
+        "exposures": [],
+        "covariates": [],
+        "uses_fasting_subsample": false,
+        "design_vars": {},
+        "steps": [
+          {
+            "step": "1",
+            "description": "Deterministic routing assessment: GBD matches a regional/global aggregate-burden question but its adapter is PLANNED.",
+            "outputs": [
+              "feasibility_refusal"
+            ]
+          }
+        ],
+        "causal_claims": [],
+        "rationale": "GBD matches a regional/global aggregate-burden question but its adapter is PLANNED.",
+        "guardrail_notes": "Deterministic router: GBD - GBD matches a regional/global aggregate-burden question but its adapter is PLANNED."
+      },
+      "error": null,
+      "execution_time_seconds": 0.0,
+      "timestamp_utc": "2026-06-30T23:47:57.010528+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [],
+      "call_telemetry": {
+        "model_call_attempted": false,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.0,
+        "duration_ms": null,
+        "duration_api_ms": null,
+        "num_turns": null,
+        "session_id": null,
+        "estimated_cost_usd": 0.0
+      },
+      "reused": false
+    },
+    {
+      "task_id": "tumor_03",
+      "arm": "arm_b",
+      "provider_type": "claude_code",
+      "model_label": "claude-sonnet-4-6",
+      "plan": null,
+      "error": "[claude_validation_error] Claude output does not validate as AnalysisPlan: 1 validation error for AnalysisPlan\noutcome.name\n  Field required [type=missing, input_value={'label': 'Brain/CNS canc...iew', 'transform': None}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.10/v/missing",
+      "execution_time_seconds": 41.34384322166443,
+      "timestamp_utc": "2026-06-30T23:47:57.010528+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [],
+      "call_telemetry": {
+        "model_call_attempted": true,
+        "input_tokens": 1454,
+        "output_tokens": 1750,
+        "cache_read_input_tokens": 98048,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.06069600000000001,
+        "duration_ms": 39590,
+        "duration_api_ms": 40743,
+        "num_turns": 4,
+        "session_id": "f74fe25f-fd3b-48c9-8412-95db024fa84d",
+        "estimated_cost_usd": null
+      },
+      "reused": false
+    },
+    {
+      "task_id": "cross_01",
+      "arm": "arm_a",
+      "provider_type": "claude_code",
+      "model_label": "claude-sonnet-4-6",
+      "plan": {
+        "title": "Fasting glucose and HOMA-IR association with self-reported stroke, NHANES 2011-2014",
+        "question": "Fasting glucose and insulin resistance (HOMA-IR) association with self-reported stroke, NHANES 2011-2014.",
+        "database": "NHANES",
+        "cycles": [
+          "G",
+          "H"
+        ],
+        "feasible": true,
+        "outcome": {
+          "name": "stroke_ever",
+          "label": "Ever told had a stroke",
+          "source_variable": "MCQ160F",
+          "source_module": "MCQ",
+          "units": null,
+          "transform": null,
+          "status": "illustrative",
+          "nhanes_cycles": [
+            "G",
+            "H"
+          ],
+          "ref_notes": null
+        },
+        "exposures": [
+          {
+            "name": "fasting_glucose",
+            "label": "Fasting serum glucose",
+            "source_variable": "LBXGLU",
+            "source_module": "LAB",
+            "units": "mg/dL",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "homa_ir",
+            "label": "Insulin resistance index (HOMA-IR)",
+            "source_variable": "LBXINS",
+            "source_module": "LAB",
+            "units": "uIU/mL",
+            "transform": "HOMA-IR = (fasting_glucose * LBXINS) / 405",
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H"
+            ],
+            "ref_notes": null
+          }
+        ],
+        "covariates": [
+          {
+            "name": "age",
+            "label": "Age in years at screening",
+            "source_variable": "RIDAGEYR",
+            "source_module": "DEMO",
+            "units": "years",
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "G",
+              "H"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "sex",
+            "label": "Gender",
+            "source_variable": "RIAGENDR",
+            "source_module": "DEMO",
+            "units": null,
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "G",
+              "H"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "race",
+            "label": "Race/Hispanic origin",
+            "source_variable": "RIDRETH1",
+            "source_module": "DEMO",
+            "units": null,
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "bmi",
+            "label": "Body mass index",
+            "source_variable": "BMXBMI",
+            "source_module": "BMX",
+            "units": "kg/m^2",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "sbp",
+            "label": "Systolic blood pressure",
+            "source_variable": "BPXSY1",
+            "source_module": "BPX",
+            "units": "mmHg",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "smoke_ever",
+            "label": "Smoked at least 100 cigarettes in life",
+            "source_variable": "SMQ020",
+            "source_module": "SMQ",
+            "units": null,
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "G",
+              "H"
+            ],
+            "ref_notes": null
+          }
+        ],
+        "uses_fasting_subsample": true,
+        "design_vars": {
+          "id": "SDMVPSU",
+          "strata": "SDMVSTRA",
+          "weight": "WTSAF2YR/2"
+        },
+        "steps": [
+          {
+            "step": "1",
+            "description": "Merge NHANES cycles G (2011-2012) and H (2013-2014), restricting to the fasting subsample with non-missing LBXGLU and LBXINS.",
+            "outputs": [
+              "merged_cycle_GH_dataset",
+              "fasting_subsample_cohort"
+            ]
+          },
+          {
+            "step": "2",
+            "description": "Derive HOMA-IR = (fasting glucose in mg/dL * fasting insulin in uIU/mL) / 405; winsorize or log-transform if heavily skewed.",
+            "outputs": [
+              "homa_ir_variable"
+            ]
+          },
+          {
+            "step": "3",
+            "description": "Define outcome as MCQ160F == 1 (told had stroke); exclude 'refused/don't know' responses.",
+            "outputs": [
+              "binary_stroke_outcome"
+            ]
+          },
+          {
+            "step": "4",
+            "description": "Apply survey design: id=SDMVPSU, strata=SDMVSTRA, fasting-sample weight WTSAF2YR divided by 2 for the two combined cycles.",
+            "outputs": [
+              "survey_design_object"
+            ]
+          },
+          {
+            "step": "5",
+            "description": "Fit survey-weighted logistic regression of stroke on fasting glucose and separately on HOMA-IR, adjusting for age, sex, race, BMI, SBP, and smoking; report adjusted ORs with 95% CIs.",
+            "outputs": [
+              "adjusted_odds_ratios",
+              "confidence_intervals"
+            ]
+          }
+        ],
+        "causal_claims": [
+          "Higher fasting glucose is associated with greater odds of self-reported stroke in cross-sectional survey-weighted analysis.",
+          "Higher HOMA-IR likely suggests greater insulin resistance and may be associated with higher odds of self-reported stroke.",
+          "Associations are cross-sectional; temporality cannot be established, so no causal inference is warranted."
+        ],
+        "rationale": "NHANES is explicitly requested and the required items exist: fasting glucose (LBXGLU) and insulin (LBXINS) are available in the fasting subsample for cycles G and H, HOMA-IR is derivable from them, and self-reported stroke (MCQ160F) is available in MCQ. 2011-2014 corresponds to cycles G and H. Because exposures require fasting labs, the fasting subsample must be used and the appropriate fasting-sample weights applied. NHANES is a cross-sectional household survey; stroke timing and severity are limited.",
+        "guardrail_notes": "Stroke is self-reported (MCQ160F) with no validation of timing, type (ischemic vs hemorrhagic), or severity, limiting causal interpretation. HOMA-IR is a surrogate for insulin resistance. The registry lists only WTMEC2YR, but the fasting subsample requires WTSAF2YR (fasting sample weight); verify availability in the fasting LAB files before analysis. Sample size is constrained by the fasting subsample, reducing power for the stroke outcome."
+      },
+      "error": null,
+      "execution_time_seconds": 45.143397092819214,
+      "timestamp_utc": "2026-06-30T23:48:38.361373+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'stroke_ever' (MCQ160F) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'fasting_glucose' (LBXGLU) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'homa_ir' (LBXINS) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'race' (RIDRETH1) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'bmi' (BMXBMI) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'sbp' (BPXSY1) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'smoke_ever' (SMQ020) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        }
+      ],
+      "call_telemetry": {
+        "model_call_attempted": true,
+        "input_tokens": 2383,
+        "output_tokens": 2781,
+        "cache_read_input_tokens": 66048,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.0705824,
+        "duration_ms": 43217,
+        "duration_api_ms": 45584,
+        "num_turns": 3,
+        "session_id": "a22f18a7-ce66-4e5f-9e4b-25287f09daa6",
+        "estimated_cost_usd": null
+      },
+      "reused": false
+    },
+    {
+      "task_id": "cross_01",
+      "arm": "arm_b",
+      "provider_type": "claude_code",
+      "model_label": "claude-sonnet-4-6",
+      "plan": {
+        "title": "Fasting glucose, HOMA-IR, and self-reported stroke in NHANES 2011-2014",
+        "question": "Fasting glucose and insulin resistance (HOMA-IR) association with self-reported stroke, NHANES 2011-2014.",
+        "database": "NHANES",
+        "cycles": [
+          "I",
+          "J"
+        ],
+        "feasible": true,
+        "outcome": {
+          "name": "stroke",
+          "label": "Self-reported stroke (ever told)",
+          "source_variable": "MCQ160F",
+          "source_module": "MCQ",
+          "units": null,
+          "transform": "binary (1=yes, 0=no; refusals/don't know set to missing)",
+          "status": "illustrative",
+          "nhanes_cycles": [
+            "I",
+            "J"
+          ],
+          "ref_notes": "MCQ160F asks 'Ever told had a stroke.' Stroke-specific item is MCQ160F."
+        },
+        "exposures": [
+          {
+            "name": "fasting_glucose",
+            "label": "Fasting serum glucose",
+            "source_variable": "LBXGLU",
+            "source_module": "LAB",
+            "units": "mg/dL",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "I",
+              "J"
+            ],
+            "ref_notes": "Measured on fasting subsample only (morning session, fast >=8-<24h)."
+          },
+          {
+            "name": "fasting_insulin",
+            "label": "Fasting serum insulin",
+            "source_variable": "LBXIN",
+            "source_module": "LAB",
+            "units": "uU/mL",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "I",
+              "J"
+            ],
+            "ref_notes": "Fasting subsample only."
+          },
+          {
+            "name": "homa_ir",
+            "label": "HOMA-IR (insulin resistance index)",
+            "source_variable": "derived",
+            "source_module": "derived",
+            "units": "unitless",
+            "transform": "HOMA-IR = (fasting_glucose_mg/dL * fasting_insulin_uU/mL) / 405; log-transform likely preferred for modeling",
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "I",
+              "J"
+            ],
+            "ref_notes": "Computed from LBXGLU and LBXIN; requires fasting subsample."
+          }
+        ],
+        "covariates": [
+          {
+            "name": "age",
+            "label": "Age in years at screening",
+            "source_variable": "RIDAGEYR",
+            "source_module": "DEMO",
+            "units": "years",
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "sex",
+            "label": "Sex",
+            "source_variable": "RIAGENDR",
+            "source_module": "DEMO",
+            "units": null,
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "race_ethnicity",
+            "label": "Race/Hispanic origin",
+            "source_variable": "RIDRETH1",
+            "source_module": "DEMO",
+            "units": null,
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "bmi",
+            "label": "Body mass index",
+            "source_variable": "BMXBMI",
+            "source_module": "BMX",
+            "units": "kg/m^2",
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "sbp",
+            "label": "Systolic blood pressure",
+            "source_variable": "BPXSY1",
+            "source_module": "BPX",
+            "units": "mmHg",
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "I",
+              "J"
+            ],
+            "ref_notes": "Use mean of available readings."
+          },
+          {
+            "name": "diabetes",
+            "label": "Doctor-diagnosed diabetes",
+            "source_variable": "DIQ010",
+            "source_module": "DIQ",
+            "units": null,
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "smoking",
+            "label": "Smoking status",
+            "source_variable": "SMQ020",
+            "source_module": "SMQ",
+            "units": null,
+            "transform": null,
+            "status": "illustrative",
+            "nhanes_cycles": [
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          },
+          {
+            "name": "education",
+            "label": "Education level",
+            "source_variable": "DMDEDUC2",
+            "source_module": "DEMO",
+            "units": null,
+            "transform": null,
+            "status": "verified",
+            "nhanes_cycles": [
+              "I",
+              "J"
+            ],
+            "ref_notes": null
+          }
+        ],
+        "uses_fasting_subsample": true,
+        "design_vars": {
+          "id": "SDMVPSU",
+          "strata": "SDMVSTRA",
+          "weight": "WTSAF2YR/2"
+        },
+        "steps": [
+          {
+            "step": "1",
+            "description": "Download DEMO, MCQ, LAB (glucose/insulin), BMX, BPX, DIQ, SMQ files for cycles I (2011-12) and J (2013-14); merge on SEQN.",
+            "outputs": [
+              "merged_cycle_IJ_dataset"
+            ]
+          },
+          {
+            "step": "2",
+            "description": "Restrict to morning fasting subsample with PHAFSTMN>=8 and <24 hours; require non-missing LBXGLU and LBXIN.",
+            "outputs": [
+              "analytic_fasting_sample"
+            ]
+          },
+          {
+            "step": "3",
+            "description": "Derive HOMA-IR = (LBXGLU * LBXIN)/405; consider log-transform for skewed distribution.",
+            "outputs": [
+              "homa_ir_variable"
+            ]
+          },
+          {
+            "step": "4",
+            "description": "Define binary outcome stroke from MCQ160F; exclude missing/refused/don't-know.",
+            "outputs": [
+              "binary_stroke_outcome"
+            ]
+          },
+          {
+            "step": "5",
+            "description": "Construct covariates: age, sex, race, BMI, SBP, diabetes, smoking, education; handle missingness with complete-case or multiple imputation.",
+            "outputs": [
+              "covariate_set"
+            ]
+          },
+          {
+            "step": "6",
+            "description": "Apply survey design with WTSAF2YR/2 (combined fasting weights across two cycles), SDMVPSU, SDMVSTRA.",
+            "outputs": [
+              "survey_design_object"
+            ]
+          },
+          {
+            "step": "7",
+            "description": "Fit survey-weighted logistic regression of stroke on each exposure (fasting glucose, log-HOMA-IR) individually and combined; report adjusted odds ratios with 95% CIs.",
+            "outputs": [
+              "adjusted_odds_ratios"
+            ]
+          },
+          {
+            "step": "8",
+            "description": "Sensitivity analysis: stratify by diabetes status; assess effect modification by age/sex.",
+            "outputs": [
+              "sensitivity_stratified_results"
+            ]
+          }
+        ],
+        "causal_claims": [
+          "Higher fasting glucose and higher HOMA-IR are associated with greater odds of self-reported stroke in cross-sectional, survey-weighted analysis; causality cannot be inferred because of the cross-sectional design and self-reported, prevalent outcome.",
+          "Adjustment for BMI, SBP, and diabetes likely attenuates the association, suggesting these may lie on the causal pathway; results with and without these covariates should both be reported."
+        ],
+        "rationale": "NHANES 2011-2014 (cycles I and J) collects fasting glucose (LBXGLU) and fasting insulin (LBXIN) on the morning fasting subsample, allowing HOMA-IR computation. Self-reported stroke is captured by MCQ160F in the MCQ module across both cycles. The analysis is feasible but must use the fasting subsample weights (WTSAF2YR), divided by 2 to combine two cycles. Cross-sectional design limits causal inference.",
+        "guardrail_notes": "Stroke is self-reported and prevalent (no timing relative to glucose measurement), so reverse causation is possible. HOMA-IR is invalid in people on insulin or with type 1 diabetes; consider excluding insulin users (RXQ_DRUG or DIQ070). Fasting weights must be used, not WTMEC2YR, or results are biased. Variable codes are illustrative and should be confirmed against the NHANES codebook for the specific cycles."
+      },
+      "error": null,
+      "execution_time_seconds": 48.70117712020874,
+      "timestamp_utc": "2026-06-30T23:49:23.504770+00:00",
+      "raw_output": null,
+      "validation_errors": [],
+      "guardrail_findings": [
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'stroke' (MCQ160F) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'fasting_glucose' (LBXGLU) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'fasting_insulin' (LBXIN) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'homa_ir' (derived) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'sbp' (BPXSY1) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        },
+        {
+          "severity": "warning",
+          "code": "ILLUSTRATIVE_VARIABLE",
+          "message": "Variable 'smoking' (SMQ020) is illustrative, not verified.",
+          "remediation": "Acceptable for scaffolding; resolve before any reported result."
+        }
+      ],
+      "call_telemetry": {
+        "model_call_attempted": true,
+        "input_tokens": 1749,
+        "output_tokens": 3386,
+        "cache_read_input_tokens": 64960,
+        "cache_creation_input_tokens": 0,
+        "claude_cli_reported_cost_usd": 0.07647100000000001,
+        "duration_ms": 46971,
+        "duration_api_ms": 48855,
+        "num_turns": 3,
+        "session_id": "e5b48ca3-537c-4764-b7a6-c3c923d3169f",
+        "estimated_cost_usd": null
+      },
+      "reused": false
+    }
+  ],
+  "timestamp_utc": "2026-06-30T23:50:12.205947+00:00"
+}

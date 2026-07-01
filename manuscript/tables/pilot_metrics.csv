@@ -1,0 +1,8 @@
+Metric,Arm A (v0.2 Gated) - Count,Arm A - Rate,Arm B (v0.1 Baseline) - Count,Arm B - Rate,Total Tasks
+Routing Accuracy,10,100%,6,60%,10
+Feasibility Assessment,10,100%,9,90%,10
+Hard Error-Free,7,70%,0,0%,10
+Correct Refusal,10,100%,9,90%,10
+Registry Code Compliance,8,80%,0,0%,10
+Plan Reconstructability,10,100%,10,100%,10
+Model Calls,3,N/A,10,N/A,10

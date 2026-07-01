@@ -1,0 +1,33 @@
+{
+  "analysis_type": "exploratory_descriptive",
+  "by_sex": {
+    "Female": {
+      "eligible_n": 2863,
+      "stroke_no_n": 2726,
+      "stroke_yes_n": 137,
+      "weighted_denominator": 123658395.03837058,
+      "weighted_numerator": 4694715.235141888,
+      "weighted_prevalence": 0.03796519624636194
+    },
+    "Male": {
+      "eligible_n": 2696,
+      "stroke_no_n": 2560,
+      "stroke_yes_n": 136,
+      "weighted_denominator": 114751762.86193857,
+      "weighted_numerator": 3297309.1145654283,
+      "weighted_prevalence": 0.028734278518514126
+    }
+  },
+  "case_study": "NHANES 2017-2018 self-reported stroke prevalence",
+  "overall": {
+    "eligible_n": 5559,
+    "invalid_or_missing_weight_among_eligible_n": 0,
+    "missing_or_noninformative_mcq160f_n": 3338,
+    "stroke_no_n": 5286,
+    "stroke_yes_n": 273,
+    "weighted_denominator": 238410157.90030918,
+    "weighted_numerator": 7992024.349707316,
+    "weighted_prevalence": 0.033522163737038285
+  },
+  "statistical_note": "Weighted prevalence uses WTINT2YR among participants with MCQ160F coded yes/no and positive interview weights. Confidence intervals are not reported because complex survey variance estimation with strata and PSU is not implemented in this case study."
+}

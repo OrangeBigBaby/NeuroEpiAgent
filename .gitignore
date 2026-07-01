@@ -1,0 +1,59 @@
+# Byte-compiled / build artifacts
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Codex session caches (never redistribute)
+/.codex/
+
+# Local env (templates are intentionally tracked via .env.example)
+.env
+.env.local
+.env.*
+!.env.example
+
+# Never commit raw datasets
+*.XPT
+*.xpt
+*.dta
+*.sas7bdat
+*.slm
+*.sim
+*.duckdb
+*.parquet
+*.feather
+data/cache/
+/02_data_raw/
+/03_data_processed/
+manifests/local/
+/results/private/
+
+# SEER CSVs are NEVER redistributed (SEER*Stat export + data-use agreement).
+# Belt-and-suspenders: even though /SEERdatabase/ lives outside the project root,
+# any export_C*.csv found anywhere in the tree is excluded.
+/SEERdatabase/
+export_C*.csv
+
+# Logs, PIDs, and prior evaluation outputs that may embed absolute paths or
+# local tokens.
+*.log
+*.pid
+/eval_results.json

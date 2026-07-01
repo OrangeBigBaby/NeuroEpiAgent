@@ -1,0 +1,74 @@
+{
+  "stroke_01": {
+    "title": "Stroke and metabolic syndrome, NHANES 2011-2018",
+    "question": "Is self-reported stroke history in US adults associated with metabolic syndrome components, pooling NHANES 2011-2018?",
+    "database": "NHANES",
+    "cycles": ["G", "H", "I", "J"],
+    "feasible": true,
+    "outcome": {
+      "name": "stroke_ever",
+      "label": "Ever told had a stroke",
+      "source_variable": "MCQ160F",
+      "source_module": "MCQ",
+      "status": "illustrative",
+      "nhanes_cycles": ["G", "H", "I", "J"],
+      "transform": null,
+      "units": null,
+      "ref_notes": null
+    },
+    "exposures": [
+      {
+        "name": "metabolic_syndrome",
+        "label": "Metabolic syndrome (ATP III criteria)",
+        "source_variable": "LBXTC",
+        "source_module": "LAB",
+        "status": "illustrative",
+        "nhanes_cycles": ["G", "H", "I", "J"],
+        "transform": "Derived from multiple components",
+        "units": null,
+        "ref_notes": "Illustrative placeholder"
+      }
+    ],
+    "covariates": [
+      {
+        "name": "age",
+        "label": "Age in years",
+        "source_variable": "RIDAGEYR",
+        "source_module": "DEMO",
+        "status": "verified",
+        "nhanes_cycles": ["G", "H", "I", "J"],
+        "transform": null,
+        "units": "years",
+        "ref_notes": "Standard demographics"
+      }
+    ],
+    "uses_fasting_subsample": false,
+    "design_vars": {
+      "id": "SDMVPSU",
+      "strata": "SDMVSTRA",
+      "weight": "WTMEC2YR/4"
+    },
+    "steps": [
+      {
+        "step": "1",
+        "description": "Merge NHANES cycles G-J and apply adult inclusion criteria",
+        "outputs": []
+      },
+      {
+        "step": "2",
+        "description": "Define metabolic syndrome components from lab variables",
+        "outputs": []
+      },
+      {
+        "step": "3",
+        "description": "Apply survey design weights for cross-sectional analysis",
+        "outputs": []
+      }
+    ],
+    "causal_claims": [
+      "Self-reported stroke history may be associated with metabolic syndrome components in cross-sectional NHANES data."
+    ],
+    "rationale": "NHANES captures both stroke self-report (MCQ160F) and metabolic syndrome components (lipids, glucose, waist circumference) across cycles G-J, making this association feasible for cross-sectional analysis.",
+    "guardrail_notes": "Outcome self-report may underestimate stroke prevalence; cross-sectional design precludes causal inference; metabolic syndrome requires clinical harmonization of lab thresholds."
+  }
+}

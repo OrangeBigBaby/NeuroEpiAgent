@@ -1,0 +1,80 @@
+plan:
+  causal_claims:
+  - Self-reported stroke history may be associated with metabolic syndrome components
+    in cross-sectional NHANES data.
+  covariates:
+  - label: Age in years
+    name: age
+    nhanes_cycles:
+    - G
+    - H
+    - I
+    - J
+    ref_notes: Standard demographics
+    source_module: DEMO
+    source_variable: RIDAGEYR
+    status: !!python/object/apply:neurosurg_epi_agent.schemas.VariableStatus
+    - verified
+    transform: null
+    units: years
+  cycles:
+  - G
+  - H
+  - I
+  - J
+  database: NHANES
+  design_vars:
+    id: SDMVPSU
+    strata: SDMVSTRA
+    weight: WTMEC2YR/4
+  exposures:
+  - label: Metabolic syndrome (ATP III criteria)
+    name: metabolic_syndrome
+    nhanes_cycles:
+    - G
+    - H
+    - I
+    - J
+    ref_notes: Illustrative placeholder
+    source_module: LAB
+    source_variable: LBXTC
+    status: !!python/object/apply:neurosurg_epi_agent.schemas.VariableStatus
+    - illustrative
+    transform: Derived from multiple components
+    units: null
+  feasible: true
+  guardrail_notes: Outcome self-report may underestimate stroke prevalence; cross-sectional
+    design precludes causal inference; metabolic syndrome requires clinical harmonization
+    of lab thresholds.
+  outcome:
+    label: Ever told had a stroke
+    name: stroke_ever
+    nhanes_cycles:
+    - G
+    - H
+    - I
+    - J
+    ref_notes: null
+    source_module: MCQ
+    source_variable: MCQ160F
+    status: !!python/object/apply:neurosurg_epi_agent.schemas.VariableStatus
+    - illustrative
+    transform: null
+    units: null
+  question: Is self-reported stroke history in US adults associated with metabolic
+    syndrome components, pooling NHANES 2011-2018?
+  rationale: NHANES captures both stroke self-report (MCQ160F) and metabolic syndrome
+    components (lipids, glucose, waist circumference) across cycles G-J, making this
+    association feasible for cross-sectional analysis.
+  steps:
+  - description: Merge NHANES cycles G-J and apply adult inclusion criteria
+    outputs: []
+    step: '1'
+  - description: Define metabolic syndrome components from lab variables
+    outputs: []
+    step: '2'
+  - description: Apply survey design weights for cross-sectional analysis
+    outputs: []
+    step: '3'
+  title: Stroke and metabolic syndrome, NHANES 2011-2018
+  uses_fasting_subsample: false

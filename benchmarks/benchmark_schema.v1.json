@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neurosurgepiagent.org/schemas/benchmark_task-v1.json",
+  "title": "NeuroSurgEpiAgent Benchmark Task",
+  "description": "Schema for a single benchmark task in the NeuroSurgEpiAgent evaluation framework",
+  "type": "object",
+  "required": ["id", "domain", "question", "expected_database", "expected_feasible", "rationale"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique task identifier",
+      "pattern": "^[a-z_][a-z0-9_]*$"
+    },
+    "domain": {
+      "type": "string",
+      "description": "Clinical domain (stroke, tbi, tumor, etc.)",
+      "enum": ["stroke", "tbi", "tumor", "pituitary", "sah", "hydrocephalus", "spine", "disparities", "global_burden"]
+    },
+    "question": {
+      "type": "string",
+      "description": "Free-text research question"
+    },
+    "expected_database": {
+      "type": "string",
+      "description": "Expected database routing from deterministic router",
+      "enum": ["NHANES", "SEER", "GBD", "CHARLS"]
+    },
+    "expected_feasible": {
+      "type": "boolean",
+      "description": "Expected feasibility assessment (true=can generate plan, false=should refuse)"
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Rationale for expected behavior"
+    },
+    "domain_specific_notes": {
+      "type": ["string", "null"],
+      "description": "Domain-specific implementation notes"
+    },
+    "review_status": {
+      "type": "string",
+      "description": "Validation status",
+      "enum": ["needs_expert_review", "expert_validated", "draft"],
+      "default": "needs_expert_review"
+    },
+    "requires_nhanes_codebook": {
+      "type": "boolean",
+      "description": "Whether NHANES codebook verification is expected",
+      "default": false
+    }
+  }
+}

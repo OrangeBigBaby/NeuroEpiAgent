@@ -1,0 +1,314 @@
+{
+  "source_experiment": "experiments\\pilot_glm52_concurrent_cost_v03\\arm_outputs.json",
+  "backend_label": "glm-5.2 via CC-Switch",
+  "pricing_usd_per_million_tokens": null,
+  "efficiency_summary": {
+    "arm_a": {
+      "total_task_arm_outputs": 10,
+      "model_calls_this_run": 3,
+      "reused_outputs": 0,
+      "calls_per_task": 0.3,
+      "elapsed_seconds_total": 140.17241191864014,
+      "elapsed_seconds_mean_per_task": 14.017241191864013,
+      "elapsed_available": 10,
+      "elapsed_missing": 0,
+      "tokens": {
+        "input_tokens": {
+          "sum": 7817,
+          "available": 10,
+          "missing": 0
+        },
+        "output_tokens": {
+          "sum": 8623,
+          "available": 10,
+          "missing": 0
+        },
+        "cache_read_input_tokens": {
+          "sum": 197568,
+          "available": 10,
+          "missing": 0
+        },
+        "cache_creation_input_tokens": {
+          "sum": 0,
+          "available": 10,
+          "missing": 0
+        }
+      },
+      "claude_cli_reported_cost_usd_total": 0.21751700000000002,
+      "claude_cli_reported_cost_usd_partial_sum_usd": 0.21751700000000002,
+      "claude_cli_reported_cost_usd_complete": true,
+      "claude_cli_reported_cost_available": 10,
+      "claude_cli_reported_cost_missing": 0,
+      "estimated_cost_usd_total": null,
+      "estimated_cost_usd_partial_sum_usd": 0.0,
+      "estimated_cost_usd_complete": false,
+      "estimated_cost_available": 7,
+      "estimated_cost_missing": 3
+    },
+    "arm_b": {
+      "total_task_arm_outputs": 10,
+      "model_calls_this_run": 10,
+      "reused_outputs": 0,
+      "calls_per_task": 1.0,
+      "elapsed_seconds_total": 391.2949392795563,
+      "elapsed_seconds_mean_per_task": 39.12949392795563,
+      "elapsed_available": 10,
+      "elapsed_missing": 0,
+      "tokens": {
+        "input_tokens": {
+          "sum": 10275,
+          "available": 10,
+          "missing": 0
+        },
+        "output_tokens": {
+          "sum": 18896,
+          "available": 10,
+          "missing": 0
+        },
+        "cache_read_input_tokens": {
+          "sum": 782848,
+          "available": 10,
+          "missing": 0
+        },
+        "cache_creation_input_tokens": {
+          "sum": 0,
+          "available": 10,
+          "missing": 0
+        }
+      },
+      "claude_cli_reported_cost_usd_total": 0.5560558,
+      "claude_cli_reported_cost_usd_partial_sum_usd": 0.5560558,
+      "claude_cli_reported_cost_usd_complete": true,
+      "claude_cli_reported_cost_available": 10,
+      "claude_cli_reported_cost_missing": 0,
+      "estimated_cost_usd_total": null,
+      "estimated_cost_usd_partial_sum_usd": null,
+      "estimated_cost_usd_complete": false,
+      "estimated_cost_available": 0,
+      "estimated_cost_missing": 10
+    },
+    "overall": {
+      "total_tasks": 10,
+      "total_task_arm_outputs": 20,
+      "model_calls_this_run": 13,
+      "reused_outputs": 0,
+      "calls_per_task": 1.3,
+      "elapsed_seconds_total": 531.4673511981964,
+      "elapsed_seconds_mean_per_task": 26.57336755990982,
+      "elapsed_available": 20,
+      "elapsed_missing": 0,
+      "tokens": {
+        "input_tokens": {
+          "sum": 18092,
+          "available": 20,
+          "missing": 0
+        },
+        "output_tokens": {
+          "sum": 27519,
+          "available": 20,
+          "missing": 0
+        },
+        "cache_read_input_tokens": {
+          "sum": 980416,
+          "available": 20,
+          "missing": 0
+        },
+        "cache_creation_input_tokens": {
+          "sum": 0,
+          "available": 20,
+          "missing": 0
+        }
+      },
+      "claude_cli_reported_cost_usd_total": 0.7735728,
+      "claude_cli_reported_cost_usd_partial_sum_usd": 0.7735728,
+      "claude_cli_reported_cost_usd_complete": true,
+      "claude_cli_reported_cost_available": 20,
+      "claude_cli_reported_cost_missing": 0,
+      "estimated_cost_usd_total": null,
+      "estimated_cost_usd_partial_sum_usd": 0.0,
+      "estimated_cost_usd_complete": false,
+      "estimated_cost_available": 7,
+      "estimated_cost_missing": 13
+    }
+  },
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "max_budget_usd_per_call": 0.5,
+    "timeout": 300,
+    "max_tasks": 10,
+    "prompt_hash_a": "1de5eab65e8e0c9acecf31ee987f285ae0c8e3265cf9788f4471b6a1885019a0",
+    "prompt_hash_b": "a3d37c52193eb9a21f186e3215b753b86cceb2a5a28b347460c1efcf6c8ed769",
+    "registry_hash": "d3d66aa464ac14c7aa0c0255583c868138d2b7dd93ab6cba590c820ffc8d90bb",
+    "task_set_hash": "fa547777bd1e349a97d8c603b4043adc90067f2d33b42f113ceff247dcb931b4",
+    "start_time_utc": "2026-06-30T23:41:20.686346+00:00",
+    "status": "completed_with_errors",
+    "total_tasks": 10,
+    "completed_tasks": 7,
+    "pending_tasks": 3,
+    "dry_run": false,
+    "backend_provenance": {
+      "model_alias": "claude-sonnet-4-6",
+      "backend_label": "glm-5.2 via CC-Switch"
+    },
+    "arm_b_reuse": {
+      "configured": false,
+      "reused_count": 0,
+      "reuse_source": null
+    },
+    "execution_design": {
+      "mode": "sequential",
+      "parallel": false,
+      "statistically_independent": false,
+      "same_run_paired": true,
+      "arm_order": [
+        "arm_a",
+        "arm_b"
+      ]
+    },
+    "pricing": {
+      "configured": false,
+      "rates_usd_per_million_tokens": null,
+      "note": "No explicit per-million-token prices supplied; estimated_cost_usd is None for all outputs."
+    },
+    "end_time_utc": "2026-06-30T23:50:12.213949+00:00",
+    "duration_seconds": 531.5276031494141,
+    "failed_tasks": 3,
+    "efficiency_summary": {
+      "arm_a": {
+        "total_task_arm_outputs": 10,
+        "model_calls_this_run": 3,
+        "reused_outputs": 0,
+        "calls_per_task": 0.3,
+        "elapsed_seconds_total": 140.17241191864014,
+        "elapsed_seconds_mean_per_task": 14.017241191864013,
+        "elapsed_available": 10,
+        "elapsed_missing": 0,
+        "tokens": {
+          "input_tokens": {
+            "sum": 7817,
+            "available": 10,
+            "missing": 0
+          },
+          "output_tokens": {
+            "sum": 8623,
+            "available": 10,
+            "missing": 0
+          },
+          "cache_read_input_tokens": {
+            "sum": 197568,
+            "available": 10,
+            "missing": 0
+          },
+          "cache_creation_input_tokens": {
+            "sum": 0,
+            "available": 10,
+            "missing": 0
+          }
+        },
+        "claude_cli_reported_cost_usd_total": 0.21751700000000002,
+        "claude_cli_reported_cost_usd_partial_sum_usd": 0.21751700000000002,
+        "claude_cli_reported_cost_usd_complete": true,
+        "claude_cli_reported_cost_available": 10,
+        "claude_cli_reported_cost_missing": 0,
+        "estimated_cost_usd_total": null,
+        "estimated_cost_usd_partial_sum_usd": 0.0,
+        "estimated_cost_usd_complete": false,
+        "estimated_cost_available": 7,
+        "estimated_cost_missing": 3
+      },
+      "arm_b": {
+        "total_task_arm_outputs": 10,
+        "model_calls_this_run": 10,
+        "reused_outputs": 0,
+        "calls_per_task": 1.0,
+        "elapsed_seconds_total": 391.2949392795563,
+        "elapsed_seconds_mean_per_task": 39.12949392795563,
+        "elapsed_available": 10,
+        "elapsed_missing": 0,
+        "tokens": {
+          "input_tokens": {
+            "sum": 10275,
+            "available": 10,
+            "missing": 0
+          },
+          "output_tokens": {
+            "sum": 18896,
+            "available": 10,
+            "missing": 0
+          },
+          "cache_read_input_tokens": {
+            "sum": 782848,
+            "available": 10,
+            "missing": 0
+          },
+          "cache_creation_input_tokens": {
+            "sum": 0,
+            "available": 10,
+            "missing": 0
+          }
+        },
+        "claude_cli_reported_cost_usd_total": 0.5560558,
+        "claude_cli_reported_cost_usd_partial_sum_usd": 0.5560558,
+        "claude_cli_reported_cost_usd_complete": true,
+        "claude_cli_reported_cost_available": 10,
+        "claude_cli_reported_cost_missing": 0,
+        "estimated_cost_usd_total": null,
+        "estimated_cost_usd_partial_sum_usd": null,
+        "estimated_cost_usd_complete": false,
+        "estimated_cost_available": 0,
+        "estimated_cost_missing": 10
+      },
+      "overall": {
+        "total_tasks": 10,
+        "total_task_arm_outputs": 20,
+        "model_calls_this_run": 13,
+        "reused_outputs": 0,
+        "calls_per_task": 1.3,
+        "elapsed_seconds_total": 531.4673511981964,
+        "elapsed_seconds_mean_per_task": 26.57336755990982,
+        "elapsed_available": 20,
+        "elapsed_missing": 0,
+        "tokens": {
+          "input_tokens": {
+            "sum": 18092,
+            "available": 20,
+            "missing": 0
+          },
+          "output_tokens": {
+            "sum": 27519,
+            "available": 20,
+            "missing": 0
+          },
+          "cache_read_input_tokens": {
+            "sum": 980416,
+            "available": 20,
+            "missing": 0
+          },
+          "cache_creation_input_tokens": {
+            "sum": 0,
+            "available": 20,
+            "missing": 0
+          }
+        },
+        "claude_cli_reported_cost_usd_total": 0.7735728,
+        "claude_cli_reported_cost_usd_partial_sum_usd": 0.7735728,
+        "claude_cli_reported_cost_usd_complete": true,
+        "claude_cli_reported_cost_available": 20,
+        "claude_cli_reported_cost_missing": 0,
+        "estimated_cost_usd_total": null,
+        "estimated_cost_usd_partial_sum_usd": 0.0,
+        "estimated_cost_usd_complete": false,
+        "estimated_cost_available": 7,
+        "estimated_cost_missing": 13
+      }
+    }
+  },
+  "caveats": [
+    "Tasks are authored development items (benchmarks/tasks.example.yaml), not expert-validated gold standard; results are not suitable for publication or comparative-effectiveness claims.",
+    "Arms were executed sequentially within a single run (Arm A then Arm B per task). This is NOT parallel execution and the two arms are NOT statistically independent samples.",
+    "'claude_cli_reported_cost_usd' is the cost reported by the Claude CLI for the session. It is NOT a vendor invoice and NOT evidence of cost-effectiveness.",
+    "'estimated_cost_usd' is computed only from caller-supplied per-million-token prices and is None unless every rate required by the observed nonzero token categories was supplied. Vendor prices are never hard-coded by the tool.",
+    "Missing token/cost fields are never summed as zero; availability and missing counts are reported alongside every total.",
+    "When any non-reused output is missing a cost field, the corresponding cost '*_total' is None (an incomplete total is never displayed as $0); the observed '*_partial_sum_usd', the '*_complete' flag, and the availability/missing counts make the gap explicit. A genuinely-zero complete total (all measured outputs report the field, including structural zeros) is reported as 0."
+  ]
+}

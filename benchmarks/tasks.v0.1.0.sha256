@@ -1,0 +1,19 @@
+{
+  "format": "NeuroSurgEpiAgent-Benchmark-Integrity-v1",
+  "benchmark_file": "tasks.v0.1.0.yaml",
+  "benchmark_version": "0.1.0",
+  "sha256": "0d8c88e9ee980581dacacb1bc89bfc753a7c9954cb013ff85f781b6fec3a9a85",
+  "generated_timestamp": "2026-06-29T00:00:00Z",
+  "expected_task_count": 30,
+  "verification_status": "DRAFT - AUTHORED GOLD ASSERTIONS PENDING INDEPENDENT EXPERT ADJUDICATION",
+  "verification_instructions": "Use benchmarks/verify_benchmark_integrity.py to verify integrity. Exit code 0 indicates all checks passed.",
+  "verified_checks": [
+    "sha256_hash_match",
+    "task_count_equals_30",
+    "unique_task_ids",
+    "declared_task_count_matches_actual",
+    "review_status_consistency",
+    "schema_field_presence",
+    "version_date_correctness"
+  ]
+}

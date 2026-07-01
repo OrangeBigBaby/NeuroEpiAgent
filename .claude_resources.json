@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-06-29T13:00:00+08:00",
+  "os": {"system": "Windows", "machine": "AMD64", "python": "3.12.9"},
+  "cpu": {"model": "AMD Ryzen 7 8845H w/ Radeon 780M Graphics", "physical_cores": 8, "logical_cores": 16},
+  "memory": {"total_gb": 95.29, "available_gb": 82.24},
+  "disk": {"drive": "C:", "available_gb": 154.51, "used_gb": 868.44},
+  "gpu": {
+    "devices": [
+      {"name": "NVIDIA GeForce RTX 4070 Laptop GPU", "reported_adapter_ram_gb": 4.0},
+      {"name": "AMD Radeon 780M Graphics", "reported_adapter_ram_gb": 0.5}
+    ],
+    "note": "This workflow is API- and CPU-bound; GPU acceleration is not required."
+  },
+  "recommendations": {
+    "parallel_processing": {"strategy": "moderate_parallelism", "suggested_workers": 4, "note": "Limit concurrent Claude/GLM calls to avoid provider rate and overload errors."},
+    "memory_strategy": {"strategy": "in_memory", "note": "Benchmark and public-data pilot fit comfortably in RAM."},
+    "large_data_handling": {"strategy": "cached_downloads", "note": "Cache source files and checksums for reproducibility."}
+  }
+}

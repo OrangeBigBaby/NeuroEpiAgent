@@ -1,0 +1,358 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neurosurgepiagent.org/schemas/analysis_plan-v1.json",
+  "title": "NeuroSurgEpiAgent Preregistered Analysis Plan",
+  "description": "Schema for preregistered statistical analysis plans for benchmark evaluation",
+  "type": "object",
+  "required": [
+    "plan_version",
+    "plan_id",
+    "created_date",
+    "status",
+    "research_questions",
+    "hypotheses",
+    "design",
+    "analyses"
+  ],
+  "properties": {
+    "plan_version": {
+      "type": "string",
+      "description": "Version of the analysis plan schema",
+      "pattern": "^1\\.[0-9]+$"
+    },
+    "plan_id": {
+      "type": "string",
+      "description": "Unique identifier for this analysis plan",
+      "pattern": "^[A-Z0-9_]+$"
+    },
+    "created_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when the analysis plan was created (YYYY-MM-DD)"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "preregistered", "active", "completed", "abandoned"],
+      "description": "Status of the analysis plan"
+    },
+    "authors": {
+      "type": "array",
+      "description": "List of authors and contributors",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "role": {"type": "string"},
+          "affiliation": {"type": "string"}
+        }
+      }
+    },
+    "research_questions": {
+      "type": "array",
+      "description": "Primary and secondary research questions",
+      "items": {
+        "type": "object",
+        "required": ["question", "type"],
+        "properties": {
+          "question_id": {"type": "string"},
+          "question": {"type": "string"},
+          "type": {
+            "type": "string",
+            "enum": ["primary", "secondary", "exploratory"]
+          },
+          "rationale": {"type": "string"}
+        }
+      }
+    },
+    "hypotheses": {
+      "type": "array",
+      "description": "Specific hypotheses to be tested",
+      "items": {
+        "type": "object",
+        "required": ["hypothesis", "direction"],
+        "properties": {
+          "hypothesis_id": {"type": "string"},
+          "hypothesis": {"type": "string"},
+          "direction": {
+            "type": "string",
+            "enum": ["greater", "less", "different", "equivalent"]
+          },
+          "related_question_id": {"type": "string"},
+          "test_type": {
+            "type": "string",
+            "enum": ["mcnemar", "wilson_ci", "risk_difference", "kappa", "other"]
+          }
+        }
+      }
+    },
+    "design": {
+      "type": "object",
+      "description": "Study design details",
+      "required": ["design_type", "sample_size", "units"],
+      "properties": {
+        "design_type": {
+          "type": "string",
+          "enum": ["paired_comparison", "ablation_study", "inter_rater_reliability", "descriptive"]
+        },
+        "sample_size": {
+          "type": "object",
+          "required": ["n"],
+          "properties": {
+            "n": {"type": "integer", "minimum": 1},
+            "justification": {"type": "string"},
+            "power_analysis": {
+              "type": "object",
+              "properties": {
+                "effect_size": {"type": "number", "minimum": 0},
+                "power": {"type": "number", "minimum": 0, "maximum": 1},
+                "alpha": {"type": "number", "minimum": 0, "maximum": 1},
+                "notes": {"type": "string"}
+              }
+            }
+          }
+        },
+        "units": {
+          "type": "string",
+          "description": "Unit of analysis (e.g., 'tasks', 'ratings', 'paired_observations')"
+        },
+        "randomization": {
+          "type": "object",
+          "properties": {
+            "method": {"type": "string"},
+            "stratification": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "blinding": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Types of blinding used (e.g., 'rater_blinded', 'analyst_blinded')"
+        }
+      }
+    },
+    "data_sources": {
+      "type": "array",
+      "description": "Data sources and their properties",
+      "items": {
+        "type": "object",
+        "required": ["source_id", "source_type"],
+        "properties": {
+          "source_id": {"type": "string"},
+          "source_type": {
+            "type": "string",
+            "enum": ["benchmark_tasks", "evaluation_results", "expert_ratings", "experimental_logs"]
+          },
+          "version": {"type": "string"},
+          "path": {"type": "string"},
+          "n_observations": {"type": "integer"},
+          "inclusion_criteria": {"type": "array", "items": {"type": "string"}},
+          "exclusion_criteria": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "outcomes": {
+      "type": "array",
+      "description": "Outcome measures and their definitions",
+      "items": {
+        "type": "object",
+        "required": ["outcome_id", "name", "type"],
+        "properties": {
+          "outcome_id": {"type": "string"},
+          "name": {"type": "string"},
+          "type": {
+            "type": "string",
+            "enum": ["binary", "proportion", "continuous", "ordinal", "nominal"]
+          },
+          "definition": {"type": "string"},
+          "measurement_method": {"type": "string"},
+          "unit": {"type": "string"},
+          "range": {
+            "type": "object",
+            "properties": {
+              "min": {"type": "number"},
+              "max": {"type": "number"}
+            }
+          }
+        }
+      }
+    },
+    "analyses": {
+      "type": "array",
+      "description": "Planned statistical analyses",
+      "items": {
+        "type": "object",
+        "required": ["analysis_id", "purpose", "method"],
+        "properties": {
+          "analysis_id": {"type": "string"},
+          "purpose": {"type": "string"},
+          "hypothesis_id": {"type": "string"},
+          "method": {
+            "type": "string",
+            "enum": [
+              "wilson_ci",
+              "mcnemar_exact",
+              "risk_difference_bootstrap",
+              "holm_correction",
+              "cohen_kappa",
+              "descriptive_statistics",
+              "sensitivity_analysis"
+            ]
+          },
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "confidence_level": {"type": "number", "minimum": 0, "maximum": 1},
+              "bootstrap_samples": {"type": "integer", "minimum": 1},
+              "random_seed": {"type": "integer"},
+              "correction_method": {"type": "string"},
+              "weights": {"type": "array"}
+            }
+          },
+          "data_requirements": {
+            "type": "object",
+            "properties": {
+              "source_ids": {"type": "array", "items": {"type": "string"}} ,
+              "outcome_ids": {"type": "array", "items": {"type": "string"}},
+              "grouping_vars": {"type": "array", "items": {"type": "string"}},
+              "filtering_criteria": {"type": "string"}
+            }
+          },
+          "assumptions": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "decision_rule": {
+            "type": "string",
+            "description": "Criteria for interpreting results (e.g., p < 0.05)"
+          },
+          "missing_data_handling": {
+            "type": "string",
+            "enum": ["complete_case", "pairwise_deletion", "imputation", "explicit_undefined"]
+          },
+          "multiple_testing_correction": {
+            "type": "object",
+            "properties": {
+              "method": {"type": "string"},
+              "alpha": {"type": "number", "minimum": 0, "maximum": 1}
+            }
+          }
+        }
+      }
+    },
+    "data_management": {
+      "type": "object",
+      "description": "Data management and quality control procedures",
+      "properties": {
+        "data_collection": {
+          "type": "object",
+          "properties": {
+            "automation_level": {"type": "string"},
+            "validation_procedures": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "data_cleaning": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "step": {"type": "string"},
+              "implementation": {"type": "string"}
+            }
+          }
+        },
+        "quality_control": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "check": {"type": "string"},
+              "threshold": {"type": "string"},
+              "action_on_failure": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "reporting": {
+      "type": "object",
+      "description": "Reporting standards and outputs",
+      "properties": {
+        "effect_size_measures": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "confidence_intervals": {
+          "type": "object",
+          "properties": {
+            "report_ci": {"type": "boolean"},
+            "confidence_level": {"type": "number"}
+          }
+        },
+        "precision": {
+          "type": "object",
+          "properties": {
+            "decimal_places": {"type": "integer"},
+            "p_value_format": {"type": "string"}
+          }
+        },
+        "tables": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "table_id": {"type": "string"},
+              "title": {"type": "string"},
+              "type": {"type": "string"},
+              "contents": {"type": "string"}
+            }
+          }
+        },
+        "figures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "figure_id": {"type": "string"},
+              "title": {"type": "string"},
+              "type": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "description": "Known limitations and potential biases",
+      "items": {
+        "type": "object",
+        "properties": {
+          "limitation": {"type": "string"},
+          "impact": {"type": "string"},
+          "mitigation": {"type": "string"}
+        }
+      }
+    },
+    "timeline": {
+      "type": "object",
+      "description": "Analysis timeline and milestones",
+      "properties": {
+        "start_date": {"type": "string", "format": "date"},
+        "end_date": {"type": "string", "format": "date"},
+        "milestones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "milestone": {"type": "string"},
+              "target_date": {"type": "string", "format": "date"},
+              "status": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "disclaimer": {
+      "type": "string",
+      "description": "Disclaimer about the preregistered status and limitations"
+    }
+  }
+}

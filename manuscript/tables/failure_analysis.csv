@@ -1,0 +1,11 @@
+Task ID,Domain,Expected Feasible,Arm A Routing,Arm A Feasibility,Arm A Errors,Arm B Routing,Arm B Feasibility,Arm B Errors
+stroke_01,Stroke,True,Pass,Pass,FASTING_WEIGHT_MISMATCH,Pass,Pass,"CAUSAL_LANGUAGE, UNRESOLVED_VARIABLE, FASTING_WEIGHT_MISMATCH"
+stroke_02,Stroke,False,Pass,Pass,None (deterministic refusal),Pass,Pass,"NHANES_PSU, NHANES_STRATA, UNRESOLVED_VARIABLE"
+stroke_03,Stroke,True,Pass,Pass,UNRESOLVED_VARIABLE,Pass,Pass,WEIGHT_RESCALE
+tbi_01,TBI,False,Pass,Pass,None (deterministic refusal),Pass,Fail,"WEIGHT_RESCALE, UNRESOLVED_VARIABLE"
+tbi_02,TBI,False,Pass,Pass,None (deterministic refusal),Fail,Pass,UNRESOLVED_VARIABLE
+tbi_03,TBI,False,Pass,Pass,None (deterministic refusal),Fail,Pass,UNRESOLVED_VARIABLE
+tumor_01,Tumor,False,Pass,Pass,None (deterministic refusal),Fail,Pass,UNRESOLVED_VARIABLE
+tumor_02,Tumor,False,Pass,Pass,None (deterministic refusal),Pass,Pass,UNRESOLVED_VARIABLE
+tumor_03,Tumor,False,Pass,Pass,None (deterministic refusal),Fail,Pass,"NHANES_PSU, NHANES_STRATA, UNRESOLVED_VARIABLE"
+cross_01,Stroke,True,Pass,Pass,"FASTING_WEIGHT_MISMATCH, WEIGHT_RESCALE; registry-code failure",Pass,Pass,WEIGHT_RESCALE
