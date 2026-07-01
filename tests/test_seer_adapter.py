@@ -214,16 +214,18 @@ class TestSEERInspect:
         assert "readme.txt" in skipped_names
 
     def test_symlink_not_followed(self, tmp_path):
+        root = tmp_path / "root"
+        root.mkdir()
         outside = tmp_path / "_outside"
         outside.mkdir()
         target = outside / "secret.csv"
         target.write_bytes(_synthetic_seer_csv(n_rows=0))
-        link = tmp_path / "leak.csv"
+        link = root / "leak.csv"
         try:
             link.symlink_to(target)
         except (OSError, NotImplementedError):
             pytest.skip("symlinks not supported on this platform/privilege")
-        payload = SEERAdapter().inspect(tmp_path).to_dict()
+        payload = SEERAdapter().inspect(root).to_dict()
         assert payload["direct_files"] == []
         skipped = [s["member_name"] for s in payload["skipped_roots"]]
         assert "leak.csv" in skipped
