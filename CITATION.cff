@@ -7,7 +7,7 @@ type: software
 license: MIT
 repository-code: "https://github.com/OrangeBigBaby/NeuroEpiAgent"
 url: "https://github.com/OrangeBigBaby/NeuroEpiAgent"
-date-released: 2026-07-01
+date-released: 2026-07-02
 version: "0.3.1"
 authors:
   - name: "NeuroSurgEpiAgent contributors"

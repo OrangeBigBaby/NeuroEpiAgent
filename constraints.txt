@@ -23,11 +23,11 @@
 # (e.g. an incompatible upstream change); the floors stay loose on purpose so
 # the library remains installable in downstream environments.
 #
-# Verified snapshot (CPython 3.12, Windows + Ubuntu) at v0.3.1:
-pydantic==2.10.3
-pyyaml==6.0.2
+# Verified snapshot (CPython 3.12, clean Windows clone) at v0.3.1. The GitHub
+# Actions matrix separately verifies the package against the latest compatible
+# dependencies on Ubuntu + Windows:
+pydantic==2.13.4
+pyyaml==6.0.3
 pytest==9.1.1
-pandas==2.3.3
-numpy==2.3.5
-setuptools==75.8.0
-wheel==0.45.1
+pandas==3.0.3
+numpy==2.5.0

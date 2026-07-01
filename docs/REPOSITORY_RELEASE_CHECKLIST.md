@@ -9,8 +9,8 @@ release.
 - [x] `python -m venv .venv && .\.venv\Scripts\Activate.ps1`
 - [x] `pip install -e ".[dev]"`
 - [x] `python -m pytest -ra` reports zero failures. At v0.3.1 the suite is
-      **442 collected** (438 passed, 4 symlink-skipped on hosts without
-      OS symlink privilege; all 442 pass on CI runners that support symlinks).
+      **460 collected** (456 passed, 4 symlink-skipped on the local host
+      without OS symlink privilege; all 460 pass on CI runners).
       This line is the v0.3.1 count — re-read it from the latest CI run before
       tagging so it cannot drift.
 - [x] No test depends on `E:\Nhance\...` or any other absolute path.
@@ -19,16 +19,17 @@ release.
 
 ## 2. `.gitignore` is intact and the staged tree is clean
 
-- [ ] `git status --short` shows the intended changes only (check at release time).
-- [ ] `git status --short --ignored` shows only paths that should be
+- [x] `git status --short` shows the intended release changes only; the two
+      internal Claude handoff reports remain deliberately untracked.
+- [x] `git status --short --ignored` shows only paths that should be
       ignored (no tracked file matches an ignored pattern).
-- [ ] `git diff --cached --name-only | grep -E '(\.XPT|\.xpt|\.dta|\.sas7bdat|\.parquet|\.feather|\.duckdb|\.csv|case_listing|export_C)'`
+- [x] `git diff --cached --name-only | grep -E '(\.XPT|\.xpt|\.dta|\.sas7bdat|\.parquet|\.feather|\.duckdb|\.csv|case_listing|export_C)'`
       returns empty.
-- [ ] `git diff --cached --name-only | grep -E '^(\.codex/|\.venv/|02_data_raw/|03_data_processed/|data/cache/|manifests/local/)'`
+- [x] `git diff --cached --name-only | grep -E '^(\.codex/|\.venv/|02_data_raw/|03_data_processed/|data/cache/|manifests/local/)'`
       returns empty.
-- [ ] `git ls-files | xargs -I {} wc -c {} | sort -n | tail` shows no file
+- [x] `git ls-files | xargs -I {} wc -c {} | sort -n | tail` shows no file
       over 50 MB.
-- [ ] `git ls-files` contains no file that is itself a directory (no
+- [x] `git ls-files` contains no file that is itself a directory (no
       nested-repo checkin).
 
 ## 3. Sensitive-information scan
@@ -51,10 +52,9 @@ release.
       (Node 24, no deprecation warnings) and `python -m pytest -ra`.
 - [x] CI does NOT download SEER / CDC WONDER / NHANES data (it only runs
       the synthetic fixtures and the test suite).
-- [ ] The latest CI run on `main` is green for the commit being tagged
-      *(must be verified after pushing the v0.3.1 candidate commit; v0.3.0's
-      CI was red — the self-trigger secret-scan and the symlink tests fixed
-      in this release).*
+- [x] The complete v0.3.1 candidate matrix is green: Ubuntu + Windows,
+      Python 3.10/3.11/3.12, secret scan, and size check. Evidence:
+      https://github.com/OrangeBigBaby/NeuroEpiAgent/actions/runs/28536422252
 
 ## 5. Documentation aligned
 
@@ -71,7 +71,7 @@ release.
 ## 6. CITATION.cff is current
 
 - [x] `CITATION.cff` lists the current version (`0.3.1`), release date
-      (`2026-07-01`), and the GitHub repository URL
+      (`2026-07-02`), and the GitHub repository URL
       (https://github.com/OrangeBigBaby/NeuroEpiAgent).
 - [x] Authors and ORCIDs (if any) are accurate.
 

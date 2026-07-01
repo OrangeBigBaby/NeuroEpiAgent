@@ -5,7 +5,7 @@ semantic versioning; the single source of truth for the release number is
 `src/neurosurg_epi_agent/__init__.py` (`__version__`), read by `pyproject.toml`
 via setuptools `dynamic = ["version"]`.
 
-## [0.3.1] — 2026-07-01
+## [0.3.1] — 2026-07-02
 
 A remediation release that makes CI reliable on every runner, unifies the
 version metadata, and hardens the SEER / CDC WONDER adapters' security and
@@ -33,6 +33,12 @@ nor was it at any prior release.
 - **Workflow modernized:** `actions/checkout@v7`, `actions/setup-python@v6`
   (Node 24, clearing the Node 20 deprecation warnings), and
   `python -m pytest -ra`.
+- **Final cross-platform correction:** the diagnostic wrapper briefly added
+  after the first failed run used Bash control-flow syntax on Windows runners;
+  it was replaced with one shell-neutral `python -m pytest` command. The SEER
+  symlink test now places its target outside the inspected root (the previous
+  fixture accidentally put the target inside the root and expected it to be
+  ignored). The final Ubuntu/Windows matrix is green on Python 3.10/3.11/3.12.
 
 ### Version metadata
 
@@ -96,9 +102,9 @@ nor was it at any prior release.
 
 ### Tests
 
-- **442 collected** at v0.3.1 (438 pass + 4 symlink tests; the symlink tests
-  skip only on hosts without OS symlink privilege and run on CI). Zero
-  failures.
+- **460 collected** at v0.3.1. On the local Windows host, 456 pass and four
+  OS-symlink tests skip because symlink privilege is unavailable. On GitHub
+  Actions runners all 460 pass. Zero failures.
 - Python: `>=3.10`, tested on 3.10 / 3.11 / 3.12 (Ubuntu + Windows).
 
 ### Reproduce

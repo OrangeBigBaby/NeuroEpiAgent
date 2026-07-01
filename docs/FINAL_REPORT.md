@@ -15,6 +15,10 @@ Remote: https://github.com/OrangeBigBaby/NeuroEpiAgent
 > release of this project should be described as CI-green unless the Actions
 > run for its tagged commit is actually green.
 
+> **Current release report:** v0.3.1 remediation and final verification are
+> recorded in `docs/V0.3.1_ACCEPTANCE_REPORT.md`. This v0.3.0 report remains
+> below as historical evidence and is not the current acceptance statement.
+
 ## 1. Acceptance summary
 
 | Criterion | Result |
