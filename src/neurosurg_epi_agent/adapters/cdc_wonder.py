@@ -203,14 +203,52 @@ def _extract_dataset_version(prov: dict[str, str]) -> str:
     return prov.get("dataset", "")
 
 
+def _parse_deaths(raw: str) -> int | None:
+    """Parse a WONDER ``Deaths`` cell to int, or ``None`` if non-numeric.
+
+    Blank, ``Suppressed``, ``Unreliable``, ``Not Applicable``, and any other
+    non-integer text return ``None``. They are NEVER coerced to 0 — doing so
+    would let a suppressed cell read as a stable zero count, which is exactly
+    the disclosure failure this adapter exists to prevent.
+    """
+    s = raw.strip()
+    if not s:
+        return None
+    # WONDER writes integer counts (no thousands separators). Reject anything
+    # that is not a plain integer so floats / flag words stay non-numeric.
+    if re.fullmatch(r"-?\d+", s):
+        try:
+            return int(s)
+        except ValueError:
+            return None
+    return None
+
+
 def _scan_data_rows(
     columns: list[str],
     data_rows: list[list[str]],
 ) -> dict[str, object]:
-    """Walk every data row once and summarize the WONDER-defined Notes statuses.
+    """Walk every data row once and re-enforce WONDER's disclosure rules in code.
 
-    The aggregate counts of suppressed / unreliable / unstable rows are the
-    only numeric summary the adapter emits. No cell values are captured.
+    The WONDER ``Notes`` status and the numeric ``Deaths`` value are checked
+    INDEPENDENTLY. A row with an empty Notes cell but ``Deaths <= 9`` is still a
+    suppression violation; a row with ``10 <= Deaths <= 19`` is still
+    unreliable. Previously an empty Notes cell short-circuited the whole row,
+    hiding exactly these violations.
+
+    Buckets emitted (counts only — no cell value is ever carried into the
+    metadata output):
+
+    * ``suppressed_row_count`` / ``unreliable_row_count`` — WONDER-flagged via
+      the Notes column.
+    * ``deaths_le_9_row_count`` — numeric Deaths 0-9 (suppression violation).
+    * ``deaths_10_19_row_count`` — numeric Deaths 10-19 (unreliable by count).
+    * ``deaths_lt_20_row_count`` — numeric Deaths < 20 (the two above combined).
+    * ``non_numeric_deaths_row_count`` — Deaths cells that are present but not a
+      plain integer (never coerced to 0).
+    * ``notes_deaths_conflict_count`` — rows where the WONDER Notes status and
+      the numeric Deaths rule disagree (e.g. Deaths=200 flagged Suppressed, or
+      Deaths=5 with no Suppressed note).
     """
     cols_lower = {c.lower(): c for c in columns}
     notes_col = cols_lower.get("notes")
@@ -220,41 +258,63 @@ def _scan_data_rows(
 
     suppressed = 0
     unreliable = 0
+    deaths_le_9 = 0
+    deaths_10_19 = 0
     deaths_lt_20 = 0
+    non_numeric_deaths = 0
+    conflicts = 0
     notes_seen: dict[str, int] = {}
 
     for r in data_rows:
-        if notes_idx >= 0 and notes_idx < len(r):
+        if 0 <= notes_idx < len(r):
             note = r[notes_idx].strip()
         else:
             note = ""
-        if not note:
-            continue
-        # Count distinct Notes phrasings without carrying the cell value into
-        # the metadata output: only count + bucket.
-        notes_seen[note] = notes_seen.get(note, 0) + 1
-        # WONDER capitalizes the keywords; compare case-insensitively so
-        # "suppressed" or "Suppressed" both count.
-        low = note.lower()
-        if any(tok.lower() in low for tok in _SUPPRESSED_TOKENS):
-            suppressed += 1
-        if any(tok.lower() in low for tok in _UNRELIABLE_TOKENS):
-            unreliable += 1
-        if deaths_idx >= 0 and deaths_idx < len(r):
-            try:
-                d = int(r[deaths_idx].strip() or "0")
-            except ValueError:
-                d = 0
-            if d < UNRELIABLE_MAX_DEATHS + 1:  # Deaths < 20
-                deaths_lt_20 += 1
+        wonder_low = note.lower()
+        if note:
+            notes_seen[note] = notes_seen.get(note, 0) + 1
+            if any(tok.lower() in wonder_low for tok in _SUPPRESSED_TOKENS):
+                suppressed += 1
+            if any(tok.lower() in wonder_low for tok in _UNRELIABLE_TOKENS):
+                unreliable += 1
 
-    # `notes_seen` is a hashable count map of distinct WONDER-written phrases.
-    # We sort keys deterministically; values are integer counts only.
+        # INDEPENDENT numeric Deaths check (this is the fix: it runs regardless
+        # of whether the Notes cell was empty).
+        raw_deaths = (
+            r[deaths_idx].strip() if 0 <= deaths_idx < len(r) else ""
+        )
+        d = _parse_deaths(raw_deaths)
+        if d is None:
+            if raw_deaths:
+                non_numeric_deaths += 1
+            continue
+
+        flagged_suppressed = "suppressed" in wonder_low
+        flagged_unreliable = "unreliable" in wonder_low
+
+        if d <= SUPPRESSED_MAX_DEATHS:                 # 0-9: suppression violation
+            deaths_le_9 += 1
+            deaths_lt_20 += 1
+            if not flagged_suppressed:
+                conflicts += 1                          # numeric 0-9, WONDER silent
+        elif d <= UNRELIABLE_MAX_DEATHS:               # 10-19: unreliable by count
+            deaths_10_19 += 1
+            deaths_lt_20 += 1
+            if not flagged_unreliable:
+                conflicts += 1                          # numeric 10-19, WONDER silent
+        else:                                          # >=20: stable
+            if flagged_suppressed or flagged_unreliable:
+                conflicts += 1                          # stable count, WONDER flagged
+
     sorted_notes = {k: notes_seen[k] for k in sorted(notes_seen)}
     return {
         "suppressed_row_count": suppressed,
         "unreliable_row_count": unreliable,
+        "deaths_le_9_row_count": deaths_le_9,
+        "deaths_10_19_row_count": deaths_10_19,
         "deaths_lt_20_row_count": deaths_lt_20,
+        "non_numeric_deaths_row_count": non_numeric_deaths,
+        "notes_deaths_conflict_count": conflicts,
         "notes_phrases_seen": sorted_notes,
     }
 
@@ -335,7 +395,11 @@ def parse_wonder_csv(raw: bytes, member_name: str = "") -> dict:
             "disclosure_summary": {
                 "suppressed_row_count": 0,
                 "unreliable_row_count": 0,
+                "deaths_le_9_row_count": 0,
+                "deaths_10_19_row_count": 0,
                 "deaths_lt_20_row_count": 0,
+                "non_numeric_deaths_row_count": 0,
+                "notes_deaths_conflict_count": 0,
                 "notes_phrases_seen": {},
             },
             "recognized": recognized,
@@ -445,11 +509,37 @@ class CDCWonderAdapter:
             disclosure = parsed["disclosure_summary"]
             prov["suppressed_row_count"] = str(disclosure["suppressed_row_count"])
             prov["unreliable_row_count"] = str(disclosure["unreliable_row_count"])
+            prov["deaths_le_9_row_count"] = str(disclosure["deaths_le_9_row_count"])
+            prov["deaths_10_19_row_count"] = str(disclosure["deaths_10_19_row_count"])
             prov["deaths_lt_20_row_count"] = str(disclosure["deaths_lt_20_row_count"])
+            prov["non_numeric_deaths_row_count"] = str(
+                disclosure["non_numeric_deaths_row_count"]
+            )
+            prov["notes_deaths_conflict_count"] = str(
+                disclosure["notes_deaths_conflict_count"]
+            )
             # Carry the distinct WONDER Notes phrases as a JSON-style list so
             # downstream disclosure checks can match them exactly without
             # rebuilding them from scratch.
             prov["notes_phrases"] = ",".join(sorted(disclosure["notes_phrases_seen"]))
+            # Explicit validation signal: suppression violations (numeric
+            # Deaths 0-9) and Notes/Deaths conflicts are release blockers.
+            prov["suppression_violation_count"] = str(
+                disclosure["deaths_le_9_row_count"]
+            )
+            validation_flags = []
+            if disclosure["deaths_le_9_row_count"]:
+                validation_flags.append(
+                    "suppression_violation: numeric Deaths<=9 present; "
+                    "not releasable as a public stable count"
+                )
+            if disclosure["notes_deaths_conflict_count"]:
+                validation_flags.append(
+                    "notes_deaths_conflict: WONDER Notes status disagrees with "
+                    "the numeric Deaths rule; investigate before release"
+                )
+            if validation_flags:
+                prov["disclosure_validation"] = " | ".join(validation_flags)
 
             direct_files.append(MemberMetadata(
                 source_archive=None,

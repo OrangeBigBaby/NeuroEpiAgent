@@ -456,3 +456,123 @@ class TestDisclosureGuardrails:
         # Disclosure phrase counted, not echoed as cell value.
         assert "Suppressed" in text  # appears as bucket count
         assert str(SENTINEL) not in text
+
+
+class TestIndependentNumericDisclosure:
+    """The numeric Deaths rule must be enforced INDEPENDENTLY of the Notes cell.
+
+    These cover the original bug: an empty Notes cell caused ``_scan_data_rows``
+    to ``continue`` before checking Deaths, so ``Deaths=5`` with no Notes was
+    silently treated as a stable, releasable row.
+    """
+
+    def _build(self, rows, tmp_path, *, dataset="Underlying Cause of Death, 2018-2024, Single Race"):
+        # Reuse the guardrail helper's shape. ``rows`` is a list of
+        # (note, year, deaths) where ``deaths`` may be an int or a string.
+        raw = _WONDER_DISCLOSURE_CSV(rows, dataset=dataset)
+        (tmp_path / "x.csv").write_bytes(raw)
+        return CDCWonderAdapter().inspect(tmp_path).to_dict()["direct_files"][0]["provenance"]
+
+    def test_notes_empty_deaths_5_is_suppression_violation(self, tmp_path):
+        prov = self._build([("", "2018", 5), ("", "2019", 200)], tmp_path)
+        # 5 is a suppression violation regardless of the empty Notes cell.
+        assert prov["deaths_le_9_row_count"] == "1"
+        assert prov["deaths_lt_20_row_count"] == "1"
+        assert prov["suppression_violation_count"] == "1"
+        assert "suppression_violation" in prov["disclosure_validation"]
+        # Empty Notes -> WONDER itself did not flag it -> conflict.
+        assert prov["notes_deaths_conflict_count"] == "1"
+
+    def test_notes_empty_deaths_15_is_unreliable_by_count(self, tmp_path):
+        prov = self._build([("", "2018", 15), ("", "2019", 200)], tmp_path)
+        assert prov["deaths_10_19_row_count"] == "1"
+        assert prov["deaths_lt_20_row_count"] == "1"
+        assert prov["notes_deaths_conflict_count"] == "1"
+
+    def test_notes_suppressed_deaths_blank(self, tmp_path):
+        # WONDER left Deaths blank and wrote Suppressed in Notes.
+        prov = self._build([("Suppressed", "2018", ""), ("", "2019", 200)], tmp_path)
+        assert prov["suppressed_row_count"] == "1"
+        # Blank Deaths is NOT coerced to 0 (would read as a stable zero count).
+        assert prov["deaths_le_9_row_count"] == "0"
+        assert prov["non_numeric_deaths_row_count"] == "0"  # blank, not "non-numeric"
+        assert "Suppressed" in prov["notes_phrases"]
+
+    def test_notes_unreliable_deaths_15_matches(self, tmp_path):
+        prov = self._build([("Unreliable", "2018", 15), ("", "2019", 200)], tmp_path)
+        assert prov["unreliable_row_count"] == "1"
+        assert prov["deaths_10_19_row_count"] == "1"
+        # WONDER flag agrees with the numeric rule -> no conflict.
+        assert prov["notes_deaths_conflict_count"] == "0"
+
+    def test_notes_deaths_conflict_stable_count_flagged(self, tmp_path):
+        # Deaths=200 (stable) but WONDER wrote Unreliable in Notes -> conflict.
+        prov = self._build([("Unreliable", "2018", 200), ("", "2019", 250)], tmp_path)
+        assert prov["notes_deaths_conflict_count"] == "1"
+        assert "notes_deaths_conflict" in prov["disclosure_validation"]
+
+    def test_non_numeric_deaths_not_coerced_to_zero(self, tmp_path):
+        # A literal non-integer Deaths cell (e.g. "Not Applicable") must not be
+        # read as 0 and misclassified as a stable count.
+        prov = self._build(
+            [("", "2018", "Not Applicable"), ("", "2019", 200)], tmp_path
+        )
+        assert prov["non_numeric_deaths_row_count"] == "1"
+        assert prov["deaths_le_9_row_count"] == "0"
+        assert prov["deaths_lt_20_row_count"] == "0"
+
+    def test_output_carries_no_raw_cell_value(self, tmp_path):
+        # The numeric Deaths values must never appear as raw cell values in the
+        # metadata output — only counts/buckets. Plant a distinct death count
+        # and assert it is absent.
+        sentinel_deaths = 9999937
+        (tmp_path / "x.csv").write_bytes(
+            _WONDER_DISCLOSURE_CSV(
+                [("", "2018", sentinel_deaths), ("", "2019", 200)]
+            )
+        )
+        text = json.dumps(
+            CDCWonderAdapter().inspect(tmp_path).to_dict(),
+            ensure_ascii=False, sort_keys=True,
+        )
+        assert str(sentinel_deaths) not in text  # the cell value never leaks
+        # The stable count is reflected only as a row-count bucket, not as the
+        # literal value.
+        assert text.count('"deaths_lt_20_row_count":') == 1
+
+
+# Module-level builder so TestIndependentNumericDisclosure can construct
+# disclosure fixtures without inheriting the guardrail test class.
+def _WONDER_DISCLOSURE_CSV(rows, *, dataset="Underlying Cause of Death, 2018-2024, Single Race"):
+    header = (
+        '"Notes","Year","Year Code",Deaths,Population,Crude Rate,'
+        'Crude Rate Lower 95% Confidence Interval,Crude Rate Upper 95% Confidence Interval,'
+        "Age Adjusted Rate,Age Adjusted Rate Lower 95% Confidence Interval,"
+        'Age Adjusted Rate Upper 95% Confidence Interval'
+    )
+    data_lines = [header]
+    for note, year, deaths in rows:
+        data_lines.append(
+            f'"{note}","{year}","{year}",{deaths},300000000,5.0,4.9,5.1,4.0,3.9,4.1'
+        )
+    meta = [
+        '"---"',
+        f'"Dataset: {dataset}"',
+        '"Query Parameters:"',
+        '"ICD-10 113 Cause List: #Cerebrovascular diseases (I60-I69)"',
+        '"Group By: Year"',
+        '"Show Totals: False"',
+        '"Show Zero Values: False"',
+        '"Show Suppressed: False"',
+        '"Standard Population: 2000 U.S. Std. Population"',
+        '"Calculate Rates Per: 100,000"',
+        '"Rate Options: Default intercensal populations"',
+        '"---"',
+        '"Query Date: Jul 1, 2026 11:05:05 AM"',
+        '"---"',
+        '"Suggested Citation: Centers for Disease Control and Prevention, NCHS."',
+        '"---"',
+        "Caveats:",
+        '"1. Synthetic caveat."',
+    ]
+    return ("\n".join(data_lines + meta) + "\n").encode("utf-8")
