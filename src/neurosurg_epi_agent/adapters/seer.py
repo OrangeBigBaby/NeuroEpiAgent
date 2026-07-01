@@ -65,6 +65,10 @@ from .base import (
 # NEUTRAL token emitted in place of the caller's real data_root.
 DATA_ROOT_TOKEN = "<user-supplied>"
 
+# Matches a Windows drive prefix, e.g. "C:" — used to reject absolute member
+# filters (the members set is a basename / relative-path filter, never absolute).
+_DRIVE_RE = re.compile(r"^[A-Za-z]:")
+
 # SEER*Stat exports use CSV with the standard .csv extension.
 _CSV_SUFFIXES = (".csv",)
 
@@ -201,6 +205,95 @@ def _stream_sha256(path: Path, max_bytes: int) -> tuple[str | None, int]:
 # Adapter
 # --------------------------------------------------------------------------- #
 
+# Recognized SEER product types (conservative format check; the adapter never
+# infers these from CSV bytes — it only sanity-checks a user-supplied value).
+_RECOGNIZED_PRODUCT_TYPES = (
+    "Research",
+    "Research Plus",
+    "Research Plus 8.0+",
+)
+
+
+def _normalize_member_filter(members: set[str]) -> set[str]:
+    """Normalize a ``members`` filter to forward-slash relative paths/basenames.
+
+    Each requested member is POSIX-normalized (backslashes -> forward slashes,
+    leading ``./`` stripped). ``..`` components, absolute POSIX paths, and
+    Windows drive-letter paths are rejected as a path-traversal guard. Duplicate
+    normalized names collapse to one entry.
+
+    A file is then considered selected when EITHER its basename OR its
+    normalized relative path (relative to ``data_root``, forward slashes) is in
+    the returned set.
+    """
+    norm: set[str] = set()
+    for m in members:
+        if not isinstance(m, str):
+            raise ValueError(f"member filter entries must be str, got {type(m)!r}")
+        name = m.replace("\\", "/")
+        # Reject traversal / absolute before any normalization that could mask it.
+        if name.startswith("/"):
+            raise ValueError(f"absolute member path rejected in filter: {m!r}")
+        if _DRIVE_RE.match(m):
+            raise ValueError(f"drive-letter member path rejected in filter: {m!r}")
+        parts = [p for p in name.split("/") if p not in ("", ".")]
+        if any(p == ".." for p in parts):
+            raise ValueError(f"traversal ('..') member path rejected in filter: {m!r}")
+        if not parts:
+            raise ValueError(f"empty member path rejected in filter: {m!r}")
+        norm.add("/".join(parts))
+    return norm
+
+
+def _partition_data_version(
+    data_version: dict[str, str] | None,
+) -> tuple[dict[str, str], dict[str, str], list[str], list[str]]:
+    """Split user-supplied ``data_version`` into known / extension / missing.
+
+    Returns ``(known, extensions, missing, format_notes)``:
+
+    * ``known``    — recognized fields with a NON-EMPTY value (whitespace-only
+                      counts as missing). The adapter records these verbatim.
+    * ``extensions`` — UNKNOWN keys (not in ``_DATA_VERSION_FIELDS``). These are
+                      carried in a clearly-labelled extension area and are NOT
+                      treated as verified provenance.
+    * ``missing``  — known fields that are absent, None, empty, or whitespace.
+    * ``format_notes`` — conservative format flags (e.g. an unrecognized
+                      ``product_type``). The adapter never infers these from the
+                      CSV bytes; it only sanity-checks the user's claim and asks
+                      for independent verification when it cannot confirm.
+    """
+    known: dict[str, str] = {}
+    extensions: dict[str, str] = {}
+    for k, v in (data_version or {}).items():
+        if k in _DATA_VERSION_FIELDS:
+            if v is None or str(v).strip() == "":
+                continue  # empty / whitespace-only -> treated as missing
+            known[k] = str(v).strip()
+        else:
+            extensions[k] = "" if v is None else str(v)
+    missing = [f for f in _DATA_VERSION_FIELDS if f not in known]
+
+    format_notes: list[str] = []
+    pt = known.get("product_type")
+    if pt and pt not in _RECOGNIZED_PRODUCT_TYPES:
+        format_notes.append(
+            f"product_type {pt!r} not in recognized set "
+            f"({_RECOGNIZED_PRODUCT_TYPES}); needs_verification"
+        )
+    ed = known.get("export_date")
+    if ed and not re.search(r"(19|20)\d{2}", ed):
+        format_notes.append(
+            f"export_date {ed!r} has no 4-digit year; needs_verification"
+        )
+    sv = known.get("seerstat_version")
+    if sv and not re.search(r"\d", sv):
+        format_notes.append(
+            f"seerstat_version {sv!r} has no digit; needs_verification"
+        )
+    return known, extensions, missing, format_notes
+
+
 class SEERAdapter:
     """Metadata-only adapter for local SEER*Stat export CSVs.
 
@@ -236,89 +329,107 @@ class SEERAdapter:
         *,
         with_sha256: bool = False,
         sha256_max_bytes: int = DEFAULT_MAX_MEMBER_BYTES,
-        max_member_bytes: int | None = None,
+        max_member_bytes: int = DEFAULT_MAX_MEMBER_BYTES,
         members: set[str] | None = None,
         data_version: dict[str, str] | None = None,
     ) -> InspectionResult:
         """Inspect a SEER*Stat export directory in metadata-only mode.
 
         Args:
-            data_root: User-supplied directory containing SEER*Stat
-                ``export_*.csv`` files.
-            with_sha256: If True, stream a SHA-256 over every file's bytes
-                (off by default because the files are large).
-            sha256_max_bytes: Hard upper bound on the bytes hashed per file.
-                Files exceeding this are inventoried with ``sha256=None`` and
-                a ``size_limit_note`` annotation.
-            max_member_bytes: Alias for ``sha256_max_bytes`` kept for
-                uniformity with the CLI's ``--max-member-bytes`` flag
-                across adapters. Ignored if ``sha256_max_bytes`` is also
-                supplied.
-            members: Optional set of basenames / relative paths to restrict
-                inspection to.
-            data_version: Optional mapping of user-supplied data-version
-                fields (``release_submission``, ``product_type``,
-                ``registry_set``, ``seerstat_version``, ``session_type``,
-                ``export_date``, ``selection_statements``,
-                ``export_data_dictionary``). Missing fields are recorded as
-                ``needs_verification`` in the adapter-level provenance; the
-                adapter never guesses.
+            data_root: User-supplied directory (or single CSV) containing
+                SEER*Stat ``export_*.csv`` files.
+            with_sha256: If True, stream a SHA-256 over every inspected file's
+                bytes (off by default because the files are large).
+            max_member_bytes: INSPECTION cap (Plan A). A CSV whose size exceeds
+                this is written to ``skipped_roots`` BEFORE its header is read
+                (unbounded-I/O guard). Distinct from ``sha256_max_bytes``.
+                Default 8 GiB.
+            sha256_max_bytes: Separate cap on the bytes hashed per file when
+                ``with_sha256=True``. A file over this cap is still inspected
+                (header read, listed in ``direct_files``) but its SHA-256 is not
+                computed; a ``sha256_note`` explains why.
+            members: Optional set of basenames / forward-slash relative paths to
+                restrict inspection to. A file is selected when EITHER its
+                basename OR its normalized relative path is in the set.
+                Traversal (``..``), absolute, and drive-letter entries raise.
+            data_version: Optional mapping of user-supplied data-version fields.
+                Empty / whitespace-only values count as missing; unknown keys are
+                isolated in an extension area and never treated as verified
+                provenance. The adapter never infers release/product from bytes.
 
         Returns:
             :class:`InspectionResult` containing per-file schema metadata.
             **No case row, no participant value, no frequency, no unique
             value** is ever present in the result.
         """
-        # Allow ``max_member_bytes`` as a CLI-uniform alias.
-        if max_member_bytes is not None:
-            sha256_max_bytes = max_member_bytes
         root = Path(data_root)
         if not root.exists():
             raise ArchiveInspectionError(f"data_root does not exist: {root}")
+        if max_member_bytes <= 0:
+            raise ValueError("max_member_bytes must be positive")
         if with_sha256 and sha256_max_bytes <= 0:
             raise ValueError("sha256_max_bytes must be positive")
 
-        data_version_in = dict(data_version or {})
-        missing = [f for f in _DATA_VERSION_FIELDS if f not in data_version_in]
-        if missing:
-            data_version_in.setdefault(
-                "needs_verification",
-                ", ".join(missing),
-            )
+        norm_members = _normalize_member_filter(members) if members else None
+        known_dv, ext_dv, missing_dv, fmt_notes = _partition_data_version(data_version)
 
         direct_files: list[MemberMetadata] = []
         skipped: list[SkippedMember] = []
 
-        candidate_paths = [root] if root.is_file() else _walk_files(root)
+        single_file = root.is_file()
+        candidate_paths = [root] if single_file else _walk_files(root)
         for p in candidate_paths:
             if p.is_dir():
                 continue
-            try:
-                rel = p.relative_to(root)
-            except ValueError:
-                rel = p
-            rel_str = str(rel).replace("\\", "/")
+            # Single-file input: member identity is the filename, not "."
+            # (relative_to(self) would yield "." — the old bug).
+            if single_file:
+                rel_str = root.name
+                member_name = root.name
+            else:
+                try:
+                    rel = p.relative_to(root)
+                except ValueError:
+                    rel = p
+                rel_str = str(rel).replace("\\", "/")
+                member_name = p.name
 
             if p.is_symlink():
                 skipped.append(SkippedMember(
-                    member_path=rel_str, member_name=p.name,
+                    member_path=rel_str, member_name=member_name,
                     reason="symlink not followed",
                 ))
                 continue
             if p.suffix.lower() not in _CSV_SUFFIXES:
                 skipped.append(SkippedMember(
-                    member_path=rel_str, member_name=p.name,
+                    member_path=rel_str, member_name=member_name,
                     reason=f"unsupported file type ({p.suffix.lower() or 'no ext'})",
                 ))
                 continue
+            # Member filter: basename OR normalized relative path must match.
+            if norm_members is not None and member_name not in norm_members \
+                    and rel_str not in norm_members:
+                continue
 
             size = p.stat().st_size
-            # Header read is bounded; do it BEFORE any SHA-256 streaming.
+            # Inspection cap (Plan A): oversize files skip BEFORE the header is
+            # read — never a full-file read. Reason carries no absolute path.
+            if size > max_member_bytes:
+                skipped.append(SkippedMember(
+                    member_path=rel_str, member_name=member_name,
+                    reason=(
+                        f"file size {size} exceeds max_member_bytes "
+                        f"({max_member_bytes}); skipped before reading"
+                    ),
+                ))
+                continue
+
+            # Header read is bounded; do it before any SHA-256 streaming.
             try:
                 header_text, truncated = _read_header(p)
             except OSError as exc:
                 skipped.append(SkippedMember(
-                    member_path=rel_str, member_name=p.name,
+                    member_path=rel_str, member_name=member_name,
                     reason=f"unreadable file: {type(exc).__name__}: {exc}",
                 ))
                 continue
@@ -343,22 +454,20 @@ class SEERAdapter:
                 prov["header_truncated"] = "true"
 
             sha256: str | None = None
-            sha256_note: str | None = None
             if with_sha256:
                 digest, _ = _stream_sha256(p, sha256_max_bytes)
                 if digest is None:
-                    sha256_note = (
+                    prov["sha256_note"] = (
                         f"file exceeds sha256_max_bytes ({sha256_max_bytes}); "
-                        "sha256 not computed"
+                        "sha256 not computed (file still inspected)"
                     )
-                    prov["sha256_note"] = sha256_note
                 else:
                     sha256 = digest
 
             direct_files.append(MemberMetadata(
                 source_archive=None,
                 member_path=rel_str,
-                member_name=p.name,
+                member_name=member_name,
                 format="seer-stat-csv",
                 byte_size=size,
                 sha256=sha256 or "",  # type: ignore[arg-type]
@@ -369,13 +478,47 @@ class SEERAdapter:
                 provenance=prov,
             ))
 
-        # Data-version provenance is emitted at the adapter level so a
-        # reviewer can see at a glance which release fields are confirmed.
-        adapter_prov = {k: str(v) for k, v in data_version_in.items()}
+        # Adapter-level provenance: data-version status + schema consistency.
+        adapter_prov: dict[str, str] = dict(known_dv)
         adapter_prov["metadata_capability"] = "implemented"
         adapter_prov["clinical_capability"] = "planned"
-        if not data_version:
-            adapter_prov["needs_verification"] = ", ".join(_DATA_VERSION_FIELDS)
+        adapter_prov["data_version_status"] = "complete" if not missing_dv else "partial"
+        adapter_prov["data_version_provenance"] = (
+            "user_supplied; adapter never infers release/product from CSV bytes; "
+            "confirm against DUA paperwork before publication"
+        )
+        if missing_dv:
+            adapter_prov["needs_verification"] = ", ".join(missing_dv)
+        if ext_dv:
+            adapter_prov["data_version_extensions"] = ", ".join(sorted(ext_dv))
+            adapter_prov["data_version_extensions_note"] = (
+                "Unknown data_version keys recorded as extensions only; NOT "
+                "treated as verified provenance."
+            )
+        if fmt_notes:
+            adapter_prov["data_version_format_check"] = " | ".join(fmt_notes)
+
+        # Explicit schema-consistency result so callers don't have to count
+        # fingerprints themselves, and so a divergent directory is never
+        # advertised as schema-verified.
+        fps = [
+            m.provenance.get("schema_fingerprint", "") for m in direct_files
+            if m.provenance.get("schema_fingerprint")
+            and m.provenance.get("schema_fingerprint") != "needs_verification"
+        ]
+        distinct = sorted(set(fps))
+        adapter_prov["schema_fingerprint_count"] = str(len(fps))
+        adapter_prov["schema_distinct_fingerprint_count"] = str(len(distinct))
+        if not fps:
+            adapter_prov["schema_consistent"] = "no_recognized_schema"
+        elif len(distinct) == 1:
+            adapter_prov["schema_consistent"] = "true"
+        else:
+            adapter_prov["schema_consistent"] = "false"
+            adapter_prov["schema_consistent_note"] = (
+                "Inspected files have differing schemas; the directory is NOT "
+                "schema-verified. Confirm export parameters per file."
+            )
 
         return InspectionResult(
             database=self.identity.database,

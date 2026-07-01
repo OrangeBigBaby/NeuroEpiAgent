@@ -359,6 +359,215 @@ class TestCrossFileSchema:
 
 
 # --------------------------------------------------------------------------- #
+# members filter — must actually restrict inspection.
+# --------------------------------------------------------------------------- #
+
+class TestMembersFilter:
+    def test_basename_filter_restricts_to_one_file(self, tmp_path):
+        (tmp_path / "a.csv").write_bytes(_synthetic_seer_csv(n_rows=0))
+        (tmp_path / "b.csv").write_bytes(_synthetic_seer_csv(n_rows=0))
+        payload = SEERAdapter().inspect(tmp_path, members={"a.csv"}).to_dict()
+        names = [m["member_name"] for m in payload["direct_files"]]
+        assert names == ["a.csv"]
+
+    def test_relative_path_filter_in_subdirectory(self, tmp_path):
+        sub = tmp_path / "site_C69"
+        sub.mkdir()
+        (tmp_path / "top.csv").write_bytes(_synthetic_seer_csv(n_rows=0))
+        (sub / "deep.csv").write_bytes(_synthetic_seer_csv(n_rows=0))
+        # Forward-slash relative path filter reaches into the subdir.
+        payload = SEERAdapter().inspect(
+            tmp_path, members={"site_C69/deep.csv"}
+        ).to_dict()
+        names = [m["member_name"] for m in payload["direct_files"]]
+        assert names == ["deep.csv"]
+
+    def test_filter_matches_chinese_filename(self, tmp_path):
+        fname = "export_C15-C26消化器官恶性肿瘤.csv"
+        (tmp_path / fname).write_bytes(_synthetic_seer_csv(n_rows=0))
+        (tmp_path / "other.csv").write_bytes(_synthetic_seer_csv(n_rows=0))
+        payload = SEERAdapter().inspect(tmp_path, members={fname}).to_dict()
+        assert [m["member_name"] for m in payload["direct_files"]] == [fname]
+
+    def test_backslash_filter_normalized(self, tmp_path):
+        sub = tmp_path / "sub"
+        sub.mkdir()
+        (sub / "x.csv").write_bytes(_synthetic_seer_csv(n_rows=0))
+        # Windows-style backslash must be normalized to "/".
+        payload = SEERAdapter().inspect(
+            tmp_path, members={"sub\\x.csv"}
+        ).to_dict()
+        assert [m["member_name"] for m in payload["direct_files"]] == ["x.csv"]
+
+    def test_traversal_member_rejected(self, tmp_path):
+        (tmp_path / "a.csv").write_bytes(_synthetic_seer_csv(n_rows=0))
+        with pytest.raises(ValueError):
+            SEERAdapter().inspect(tmp_path, members={"../escape.csv"}).to_dict()
+
+    def test_absolute_member_rejected(self, tmp_path):
+        (tmp_path / "a.csv").write_bytes(_synthetic_seer_csv(n_rows=0))
+        with pytest.raises(ValueError):
+            SEERAdapter().inspect(tmp_path, members={"/etc/passwd"}).to_dict()
+
+    def test_drive_letter_member_rejected(self, tmp_path):
+        (tmp_path / "a.csv").write_bytes(_synthetic_seer_csv(n_rows=0))
+        with pytest.raises(ValueError):
+            SEERAdapter().inspect(tmp_path, members={r"C:\secret\leak.csv"}).to_dict()
+
+
+# --------------------------------------------------------------------------- #
+# max_member_bytes — Plan A: inspection cap, independent of the SHA-256 cap.
+# --------------------------------------------------------------------------- #
+
+class TestMaxMemberBytesInspectionCap:
+    def _oversize_csv(self, tmp_path):
+        # A real synthetic CSV whose size we control. Pad a data row so the
+        # file is comfortably over a small cap; the adapter must NOT read it.
+        big_row = ",".join(f'"pad{i}"' for i in range(50))
+        text = SYNTHETIC_CNS_HEADER + "\n" + big_row + "\n"
+        (tmp_path / "big.csv").write_text(text, encoding="utf-8")
+        return tmp_path / "big.csv", (tmp_path / "big.csv").stat().st_size
+
+    def test_oversize_skipped_without_sha256(self, tmp_path):
+        path, size = self._oversize_csv(tmp_path)
+        payload = SEERAdapter().inspect(
+            tmp_path, max_member_bytes=size - 1
+        ).to_dict()
+        assert payload["direct_files"] == []
+        skip = payload["skipped_roots"][0]
+        assert skip["member_name"] == "big.csv"
+        assert "exceeds max_member_bytes" in skip["reason"]
+        assert "skipped before reading" in skip["reason"]
+        # No absolute path in the reason.
+        assert str(tmp_path) not in skip["reason"]
+
+    def test_oversize_behaviour_same_with_sha256(self, tmp_path):
+        # The inspection cap applies regardless of whether hashing is on.
+        path, size = self._oversize_csv(tmp_path)
+        payload = SEERAdapter().inspect(
+            tmp_path, max_member_bytes=size - 1, with_sha256=True
+        ).to_dict()
+        assert payload["direct_files"] == []
+        assert "big.csv" in [s["member_name"] for s in payload["skipped_roots"]]
+
+    def test_sha256_cap_does_not_skip_inspection(self, tmp_path):
+        # A file under max_member_bytes but over sha256_max_bytes IS inspected;
+        # only its hash is skipped. This proves the two caps are distinct.
+        big_row = ",".join(f'"pad{i}"' for i in range(50))
+        text = SYNTHETIC_CNS_HEADER + "\n" + big_row + "\n"
+        (tmp_path / "big.csv").write_text(text, encoding="utf-8")
+        size = (tmp_path / "big.csv").stat().st_size
+        payload = SEERAdapter().inspect(
+            tmp_path,
+            max_member_bytes=size + 10_000,   # inspection allowed
+            with_sha256=True,
+            sha256_max_bytes=size - 1,        # hash skipped
+        ).to_dict()
+        mm = payload["direct_files"][0]
+        assert mm["member_name"] == "big.csv"
+        assert mm["sha256"] == ""
+        assert "exceeds sha256_max_bytes" in mm["provenance"]["sha256_note"]
+
+
+# --------------------------------------------------------------------------- #
+# Single-file input — member_path must be the filename, not ".".
+# --------------------------------------------------------------------------- #
+
+class TestSingleFileInput:
+    def test_single_file_member_path_is_filename(self, tmp_path):
+        f = tmp_path / "export_C69-C72.csv"
+        f.write_bytes(_synthetic_seer_csv(n_rows=0))
+        payload = SEERAdapter().inspect(f).to_dict()
+        assert len(payload["direct_files"]) == 1
+        mm = payload["direct_files"][0]
+        assert mm["member_path"] == "export_C69-C72.csv"
+        assert mm["member_name"] == "export_C69-C72.csv"
+
+
+# --------------------------------------------------------------------------- #
+# data_version — empty/whitespace treated as missing; unknowns isolated.
+# --------------------------------------------------------------------------- #
+
+class TestDataVersionValidation:
+    def test_empty_string_treated_as_missing(self, tmp_path):
+        (tmp_path / "a.csv").write_bytes(_synthetic_seer_csv(n_rows=0))
+        payload = SEERAdapter().inspect(
+            tmp_path, data_version={"product_type": ""}
+        ).to_dict()
+        prov = payload["provenance"]
+        # Empty value -> product_type counts as missing (not recorded as a value).
+        assert "product_type" not in prov
+        assert "product_type" in prov["needs_verification"]
+
+    def test_whitespace_only_treated_as_missing(self, tmp_path):
+        (tmp_path / "a.csv").write_bytes(_synthetic_seer_csv(n_rows=0))
+        payload = SEERAdapter().inspect(
+            tmp_path, data_version={"product_type": "   "}
+        ).to_dict()
+        prov = payload["provenance"]
+        assert "product_type" in prov["needs_verification"]
+
+    def test_unknown_field_isolated_as_extension(self, tmp_path):
+        (tmp_path / "a.csv").write_bytes(_synthetic_seer_csv(n_rows=0))
+        payload = SEERAdapter().inspect(
+            tmp_path,
+            data_version={"product_type": "Research", "bogus_field": "x"},
+        ).to_dict()
+        prov = payload["provenance"]
+        # Known field recorded normally.
+        assert prov["product_type"] == "Research"
+        # Unknown field is NOT silently treated as provenance; it lands in the
+        # extensions area, clearly labelled.
+        assert "bogus_field" not in prov
+        assert "bogus_field" in prov["data_version_extensions"]
+        assert "NOT treated as verified provenance" in prov[
+            "data_version_extensions_note"
+        ]
+
+    def test_unrecognized_product_type_flagged(self, tmp_path):
+        (tmp_path / "a.csv").write_bytes(_synthetic_seer_csv(n_rows=0))
+        payload = SEERAdapter().inspect(
+            tmp_path, data_version={"product_type": "Totally Bogus"}
+        ).to_dict()
+        prov = payload["provenance"]
+        assert "needs_verification" in prov["data_version_format_check"]
+        assert "product_type" in prov["data_version_format_check"]
+
+    def test_never_guesses_release_from_csv(self, tmp_path):
+        (tmp_path / "a.csv").write_bytes(_synthetic_seer_csv(n_rows=0))
+        payload = SEERAdapter().inspect(tmp_path).to_dict()
+        prov = payload["provenance"]
+        # No data_version supplied -> every field needs verification; the
+        # adapter asserts it never inferred them.
+        assert "needs_verification" in prov
+        assert "release_submission" in prov["needs_verification"]
+        assert prov["data_version_provenance"].startswith("user_supplied")
+
+
+# --------------------------------------------------------------------------- #
+# schema_consistent — explicit adapter-level result.
+# --------------------------------------------------------------------------- #
+
+class TestSchemaConsistencyFlag:
+    def test_consistent_directory_flagged_true(self, tmp_path):
+        for i in range(5):
+            (tmp_path / f"f{i}.csv").write_bytes(_synthetic_seer_csv(n_rows=0))
+        prov = SEERAdapter().inspect(tmp_path).to_dict()["provenance"]
+        assert prov["schema_consistent"] == "true"
+        assert prov["schema_distinct_fingerprint_count"] == "1"
+        assert prov["schema_fingerprint_count"] == "5"
+
+    def test_inconsistent_directory_flagged_false(self, tmp_path):
+        (tmp_path / "a.csv").write_bytes(_synthetic_seer_csv(n_rows=0))
+        alt = SYNTHETIC_CNS_HEADER.replace('"Year of diagnosis"', '"Year of death"')
+        (tmp_path / "b.csv").write_bytes(_synthetic_seer_csv(header=alt, n_rows=0))
+        prov = SEERAdapter().inspect(tmp_path).to_dict()["provenance"]
+        assert prov["schema_consistent"] == "false"
+        assert prov["schema_distinct_fingerprint_count"] == "2"
+        assert "NOT schema-verified" in prov["schema_consistent_note"]
+
+
+# --------------------------------------------------------------------------- #
 # CLI integration.
 # --------------------------------------------------------------------------- #
 
