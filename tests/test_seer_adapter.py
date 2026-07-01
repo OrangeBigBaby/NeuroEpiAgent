@@ -23,6 +23,8 @@ import json
 import re
 from pathlib import Path
 
+import pytest
+
 from neurosurg_epi_agent.adapters import SEERAdapter, default_registry
 from neurosurg_epi_agent.adapters.seer import (
     DATA_ROOT_TOKEN,
@@ -220,10 +222,37 @@ class TestSEERInspect:
         try:
             link.symlink_to(target)
         except (OSError, NotImplementedError):
-            return
+            pytest.skip("symlinks not supported on this platform/privilege")
         payload = SEERAdapter().inspect(tmp_path).to_dict()
         assert payload["direct_files"] == []
-        assert "leak.csv" in [s["member_name"] for s in payload["skipped_roots"]]
+        skipped = [s["member_name"] for s in payload["skipped_roots"]]
+        assert "leak.csv" in skipped
+        # The symlink target's bytes never reach the output.
+        import hashlib
+        assert hashlib.sha256(target.read_bytes()).hexdigest() not in json.dumps(payload)
+
+    def test_symlink_recorded_without_os_symlink_support(self, tmp_path, monkeypatch):
+        # Regression guard for the CI failure: on runners that DO support
+        # symlinks, a symlinked file must land in skipped_roots (not be silently
+        # dropped by _walk_files). We force is_symlink()==True on a normal file
+        # so the behaviour is exercised on platforms (like this Windows host)
+        # that otherwise cannot create symlinks.
+        import pathlib
+        fake = tmp_path / "looks_like_symlink.csv"
+        fake.write_bytes(_synthetic_seer_csv(n_rows=0))
+        target = str(fake)
+        orig = pathlib.Path.is_symlink
+
+        def patched_is_symlink(self):
+            return True if str(self) == target else orig(self)
+
+        monkeypatch.setattr(pathlib.Path, "is_symlink", patched_is_symlink)
+        payload = SEERAdapter().inspect(tmp_path).to_dict()
+        assert payload["direct_files"] == []
+        skipped = [s["member_name"] for s in payload["skipped_roots"]]
+        assert "looks_like_symlink.csv" in skipped
+        # The file's bytes are never read (it was treated as a symlink).
+        assert payload["skipped_roots"][0]["reason"] == "symlink not followed"
 
 
 # --------------------------------------------------------------------------- #

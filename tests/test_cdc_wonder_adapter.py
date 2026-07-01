@@ -13,6 +13,8 @@ import hashlib
 import json
 from pathlib import Path
 
+import pytest
+
 from neurosurg_epi_agent.adapters import CDCWonderAdapter, default_registry
 from neurosurg_epi_agent.adapters.cdc_wonder import parse_wonder_csv
 from neurosurg_epi_agent.cli import main as cli_main
@@ -210,12 +212,35 @@ class TestSymlinks:
         try:
             link.symlink_to(target)
         except (OSError, NotImplementedError):
-            return  # not supported on this platform/privilege — trivially inert
+            pytest.skip("not supported on this platform/privilege — trivially inert")
         payload = CDCWonderAdapter().inspect(root).to_dict()
         assert payload["direct_files"] == []
         assert "leak.csv" in [s["member_name"] for s in payload["skipped_roots"]]
         secret_hash = hashlib.sha256(target.read_bytes()).hexdigest()
         assert secret_hash not in json.dumps(payload)
+
+    def test_symlink_recorded_without_os_symlink_support(self, tmp_path, monkeypatch):
+        # Regression guard for the CI failure: on runners that support
+        # symlinks, a symlinked file must be recorded in skipped_roots rather
+        # than silently dropped by _walk_files. Force is_symlink()==True so the
+        # path runs on hosts that cannot otherwise create symlinks.
+        import pathlib
+        root = tmp_path / "root"
+        root.mkdir()
+        fake = root / "looks_like_symlink.csv"
+        fake.write_bytes(_wonder_csv())
+        target = str(fake)
+        orig = pathlib.Path.is_symlink
+
+        def patched_is_symlink(self):
+            return True if str(self) == target else orig(self)
+
+        monkeypatch.setattr(pathlib.Path, "is_symlink", patched_is_symlink)
+        payload = CDCWonderAdapter().inspect(root).to_dict()
+        assert payload["direct_files"] == []
+        assert "looks_like_symlink.csv" in [
+            s["member_name"] for s in payload["skipped_roots"]
+        ]
 
 
 # --------------------------------------------------------------------------- #

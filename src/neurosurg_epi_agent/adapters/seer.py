@@ -112,16 +112,20 @@ _SITE_RANGE_RE = re.compile(r"(C\d{2})\s*-\s*(C\d{2})", re.IGNORECASE)
 # --------------------------------------------------------------------------- #
 
 def _walk_files(root: Path) -> list[Path]:
-    """Return real (non-symlinked) files under ``root`` in deterministic order."""
+    """Return real files under ``root`` (including symlinked files) in order.
+
+    Symlinked *directories* are not descended into (``followlinks=False`` and
+    the dirnames filter). Symlinked *files* ARE returned so the caller's inspect
+    loop can record them in ``skipped_roots`` — a symlink pointing outside the
+    requested root must never be silently dropped, and must never be read.
+    """
     found: list[Path] = []
     for dirpath, dirnames, filenames in os.walk(root, followlinks=False):
         dirnames[:] = sorted(
             d for d in dirnames if not (Path(dirpath) / d).is_symlink()
         )
         for fname in sorted(filenames):
-            p = Path(dirpath) / fname
-            if not p.is_symlink():
-                found.append(p)
+            found.append(Path(dirpath) / fname)
     return found
 
 

@@ -16,10 +16,10 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         python-version: ["3.10", "3.11", "3.12"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
@@ -30,34 +30,36 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Run pytest
-        run: pytest -q
+        # Use `python -m pytest` so the interpreter owning the installed
+        # `neurosurg-epi-agent` + pytest is the one that runs. `-ra` summarizes
+        # everything except passed tests; full output is retained on failure.
+        run: python -m pytest -ra
 
   secret-scan:
     name: secret scan on tracked tree
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: scan for accidental secrets / absolute paths
-        run: |
-          # Allowlisted files where these strings appear as policy text.
-          ALLOWLIST='(docs/DATA_GOVERNANCE.md|docs/DATA_PROVENANCE.md|docs/REPOSITORY_RELEASE_CHECKLIST.md)'
-          # Search tracked tree only — never the working copy.
-          HITS=$(git ls-files | grep -vE "$ALLOWLIST" | \
-                 xargs grep -lE '(api_key|apikey|password|Bearer)[^A-Za-z]|E:\\Nhance|C:\\Users' 2>/dev/null || true)
-          if [ -n "$HITS" ]; then
-            echo "ERROR: forbidden tokens / absolute paths found in tracked tree:"
-            echo "$HITS"
-            exit 1
-          fi
-          echo "secret scan: clean"
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: scan tracked files for secrets / absolute paths
+        # The scanner is a standalone, unit-tested module
+        # (scripts/scan_tracked_secrets.py + tests/test_secret_scan.py). It
+        # detects credential assignments and well-known token shapes, plus the
+        # local workspace path markers, while allowing exact policy-doc paths
+        # via a precise allowlist. It does NOT match bare keyword mentions, so
+        # it cannot self-trigger on its own rules.
+        run: python scripts/scan_tracked_secrets.py --root .
 
   size-check:
     name: tracked files <= 50 MB
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: ensure no tracked file exceeds 50 MB
