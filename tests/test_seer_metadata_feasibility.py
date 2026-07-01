@@ -84,7 +84,8 @@ class TestRunCaseStudy:
         run_case_study(out, seed=2026)
         prov = json.loads((out / "provenance.json").read_text(encoding="utf-8"))
         assert prov["python_version"]
-        assert "0.2.0" in prov["package_versions"]["neurosurg_epi_agent"]
+        pkg = prov["package_versions"]["neurosurg_epi_agent"]
+        assert pkg and pkg[0].isdigit() and "." in pkg
         assert prov["synthetic_files_written"]
         assert prov["synthetic_data_rows_per_file"] > 0
         # Data version was not supplied → needs_verification.

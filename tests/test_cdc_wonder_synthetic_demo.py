@@ -81,7 +81,11 @@ class TestRunCaseStudy:
         run_case_study(out, seed=2026)
         prov = json.loads((out / "provenance.json").read_text(encoding="utf-8"))
         assert prov["python_version"]
-        assert "0.2.0" in prov["package_versions"]["neurosurg_epi_agent"]
+        # The case study's package version is whatever is hard-coded in
+        # build_provenance(); assert it is non-empty and starts with a
+        # digit so future version bumps don't break this test.
+        pkg = prov["package_versions"]["neurosurg_epi_agent"]
+        assert pkg and pkg[0].isdigit() and "." in pkg
         assert prov["random_seed"] == 2026
 
     def test_report_markdown_is_conservative_language(self, tmp_path):

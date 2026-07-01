@@ -6,14 +6,14 @@
   "case_study": "seer_metadata_feasibility",
   "data_version_provided": {},
   "data_version_status": "needs_verification",
-  "generated_at": "2026-07-01T14:28:01.135866+00:00",
+  "generated_at": "2026-07-01T14:31:36.889948+00:00",
   "input_schema_fingerprint": "synthetic-fixed-v1",
   "limitations": [
     "This is a SYNTHETIC case study. The byte sizes, file names, and schema fingerprints below come from CSVs the case study wrote itself into a temporary directory; they do not describe the user's real SEER*Stat exports.",
     "Running this case study does NOT exercise any clinical analysis. To do that, the analyst must complete `docs/SEER_STUDY_CONTRACT.md`."
   ],
   "package_versions": {
-    "neurosurg_epi_agent": "0.2.0",
+    "neurosurg_epi_agent": "0.3.0",
     "platform": "Windows-11-10.0.26200-SP0",
     "python": "3.12.9"
   },

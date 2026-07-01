@@ -368,7 +368,7 @@ class CDCWonderAdapter:
     identity = AdapterIdentity(
         database="CDC_WONDER",
         label="CDC WONDER public aggregate mortality/natality exports",
-        version="0.2.0",
+        version="0.3.0",
         data_formats=("csv",),
         capabilities=("metadata-inspection",),
         access="public",

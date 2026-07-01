@@ -162,7 +162,7 @@ def run_case_study(
         "generated_at": utc_now_iso(),
         "python_version": platform.python_version(),
         "package_versions": {
-            "neurosurg_epi_agent": "0.2.0",
+            "neurosurg_epi_agent": "0.3.0",
             "python": platform.python_version(),
             "platform": platform.platform(),
         },
