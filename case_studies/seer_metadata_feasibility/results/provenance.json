@@ -1,0 +1,39 @@
+{
+  "adapter_capability_split": {
+    "clinical_analysis": "planned (not exposed by SEERAdapter)",
+    "metadata_inspection": "supported (this case study)"
+  },
+  "case_study": "seer_metadata_feasibility",
+  "data_version_provided": {},
+  "data_version_status": "needs_verification",
+  "generated_at": "2026-07-01T14:28:01.135866+00:00",
+  "input_schema_fingerprint": "synthetic-fixed-v1",
+  "limitations": [
+    "This is a SYNTHETIC case study. The byte sizes, file names, and schema fingerprints below come from CSVs the case study wrote itself into a temporary directory; they do not describe the user's real SEER*Stat exports.",
+    "Running this case study does NOT exercise any clinical analysis. To do that, the analyst must complete `docs/SEER_STUDY_CONTRACT.md`."
+  ],
+  "package_versions": {
+    "neurosurg_epi_agent": "0.2.0",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.9"
+  },
+  "python_version": "3.12.9",
+  "synthetic_data_disclosure_note": "The synthetic data rows in the temp tree are NEVER written into this case study's outputs. Only file-level metadata (name, byte size, schema fingerprint) is emitted.",
+  "synthetic_data_rows_per_file": 50,
+  "synthetic_files_written": [
+    "export_C00-C09.csv",
+    "export_C10-C14.csv",
+    "export_C15-C26.csv",
+    "export_C30-C39.csv",
+    "export_C40-C49.csv",
+    "export_C50.csv",
+    "export_C51-C53.csv",
+    "export_C54-C58.csv",
+    "export_C60-C63.csv",
+    "export_C64-C68.csv",
+    "export_C69-C72.csv",
+    "export_C73-C75.csv",
+    "export_C76-C80.csv"
+  ],
+  "synthetic_seed": 2026
+}

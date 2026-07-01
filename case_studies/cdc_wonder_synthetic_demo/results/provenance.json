@@ -1,0 +1,22 @@
+{
+  "case_study": "cdc_wonder_synthetic_demo",
+  "generated_at": "2026-07-01T14:27:01.797245+00:00",
+  "input_schema_fingerprint": "synthetic-fixed-v1",
+  "limitations": [
+    "The numbers are entirely synthetic.",
+    "This case study demonstrates the disclosure posture; it does NOT demonstrate a real-world clinical finding."
+  ],
+  "package_versions": {
+    "neurosurg_epi_agent": "0.2.0",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.9"
+  },
+  "python_version": "3.12.9",
+  "random_seed": 2026,
+  "source": {
+    "is_real_data": false,
+    "label": "CDC WONDER synthetic UCD cerebrovascular series",
+    "synthetic_note": "Numbers in this case study are invented to demonstrate the disclosure-checked aggregate workflow. They MUST NOT be cited as real CDC WONDER data.",
+    "year_range": "1999-2018"
+  }
+}

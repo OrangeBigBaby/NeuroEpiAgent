@@ -52,9 +52,11 @@ state changes.
 | # | Claim | State | Evidence |
 | --- | --- | --- | --- |
 | K1 | The NHANES 2017-2018 stroke prevalence case study reports a descriptive aggregate output, not a clinical estimate. | supported | `case_studies/nhanes_stroke_2017_2018/results.json`; explicit limitations in `provenance.json` |
-| K2 | The CDC WONDER neurology-mortality-trends case study produces disclosure-checked outputs. | needs evidence | Awaiting user sign-off of `manuscript/RESEARCH_CONTRACTS.md` § B and analyst run |
-| K3 | The SEER CNS feasibility case study enumerates row counts per year / behavior / SEER Brain and CNS Recode without ever emitting a case row. | needs evidence | Awaiting user sign-off of `manuscript/RESEARCH_CONTRACTS.md` § C and analyst run |
-| K4 | The published article cites a software release with a tagged version, a commit SHA, and a dependency lock. | needs evidence | Requires finalizing the v0.2.0 release per `docs/REPOSITORY_RELEASE_CHECKLIST.md` |
+| K2 | The CDC WONDER synthetic-data case study demonstrates the disclosure-checked aggregate workflow: `Deaths <= 9` cells are dropped; `Deaths < 20` cells are flagged `Unreliable`; UCD vs MCD are not combined. | supported | `case_studies/cdc_wonder_synthetic_demo/` (synthetic only); `tests/test_cdc_wonder_synthetic_demo.py` |
+| K3 | The SEER metadata/feasibility case study inspects a synthetic SEER-shaped tree and emits only file-level metadata (no row, no frequency, no unique value). | supported | `case_studies/seer_metadata_feasibility/`; `tests/test_seer_metadata_feasibility.py` |
+| K4 | The CDC WONDER neurology-mortality-trends clinical case study (with real CDC WONDER data) produces disclosure-checked outputs. | needs evidence | Awaiting user sign-off of `manuscript/RESEARCH_CONTRACTS.md` § B and analyst run |
+| K5 | The SEER CNS feasibility case study on the user's real SEER\*Stat export enumerates row counts per year / behavior / SEER Brain and CNS Recode without ever emitting a case row. | needs evidence | Awaiting user sign-off of `manuscript/RESEARCH_CONTRACTS.md` § C and analyst run |
+| K6 | The published article cites a software release with a tagged version, a commit SHA, and a dependency lock. | needs evidence | Requires finalizing the v0.2.0 release per `docs/REPOSITORY_RELEASE_CHECKLIST.md` |
 
 ### Out-of-scope claims (must NOT be made)
 

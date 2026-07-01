@@ -1,0 +1,301 @@
+{
+  "aggregate_by_family": {
+    "UCD": {
+      "deaths_max": 150000,
+      "deaths_min": 117800,
+      "family": "UCD",
+      "row_count": 20,
+      "year_max": 2018,
+      "year_min": 1999
+    }
+  },
+  "annotated_rows": [
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 150000,
+      "disclosure_status": "OK",
+      "year": 1999
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 148500,
+      "disclosure_status": "OK",
+      "year": 2000
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 145800,
+      "disclosure_status": "OK",
+      "year": 2001
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 142300,
+      "disclosure_status": "OK",
+      "year": 2002
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 138900,
+      "disclosure_status": "OK",
+      "year": 2003
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 134200,
+      "disclosure_status": "OK",
+      "year": 2004
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 130400,
+      "disclosure_status": "OK",
+      "year": 2005
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 127100,
+      "disclosure_status": "OK",
+      "year": 2006
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 124500,
+      "disclosure_status": "OK",
+      "year": 2007
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 122900,
+      "disclosure_status": "OK",
+      "year": 2008
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 120400,
+      "disclosure_status": "OK",
+      "year": 2009
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 118700,
+      "disclosure_status": "OK",
+      "year": 2010
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 117800,
+      "disclosure_status": "OK",
+      "year": 2011
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 117900,
+      "disclosure_status": "OK",
+      "year": 2012
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 118700,
+      "disclosure_status": "OK",
+      "year": 2013
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 119900,
+      "disclosure_status": "OK",
+      "year": 2014
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 121500,
+      "disclosure_status": "OK",
+      "year": 2015
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 123400,
+      "disclosure_status": "OK",
+      "year": 2016
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 125300,
+      "disclosure_status": "OK",
+      "year": 2017
+    },
+    {
+      "database_family": "UCD",
+      "dataset_label": "Underlying Cause of Death, 1999-2020, Single Race",
+      "deaths": 126900,
+      "disclosure_status": "OK",
+      "year": 2018
+    }
+  ],
+  "disclosure_counts": {
+    "OK": 20,
+    "Suppressed_dropped": 1,
+    "Unreliable": 0
+  },
+  "year_over_year": [
+    {
+      "change_from_prior_year": null,
+      "deaths": 150000,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": null,
+      "year": 1999
+    },
+    {
+      "change_from_prior_year": -1500,
+      "deaths": 148500,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": -0.01,
+      "year": 2000
+    },
+    {
+      "change_from_prior_year": -2700,
+      "deaths": 145800,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": -0.01818181818181818,
+      "year": 2001
+    },
+    {
+      "change_from_prior_year": -3500,
+      "deaths": 142300,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": -0.02400548696844993,
+      "year": 2002
+    },
+    {
+      "change_from_prior_year": -3400,
+      "deaths": 138900,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": -0.023893183415319746,
+      "year": 2003
+    },
+    {
+      "change_from_prior_year": -4700,
+      "deaths": 134200,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": -0.033837293016558675,
+      "year": 2004
+    },
+    {
+      "change_from_prior_year": -3800,
+      "deaths": 130400,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": -0.028315946348733235,
+      "year": 2005
+    },
+    {
+      "change_from_prior_year": -3300,
+      "deaths": 127100,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": -0.02530674846625767,
+      "year": 2006
+    },
+    {
+      "change_from_prior_year": -2600,
+      "deaths": 124500,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": -0.020456333595594022,
+      "year": 2007
+    },
+    {
+      "change_from_prior_year": -1600,
+      "deaths": 122900,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": -0.01285140562248996,
+      "year": 2008
+    },
+    {
+      "change_from_prior_year": -2500,
+      "deaths": 120400,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": -0.02034174125305126,
+      "year": 2009
+    },
+    {
+      "change_from_prior_year": -1700,
+      "deaths": 118700,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": -0.014119601328903655,
+      "year": 2010
+    },
+    {
+      "change_from_prior_year": -900,
+      "deaths": 117800,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": -0.007582139848357203,
+      "year": 2011
+    },
+    {
+      "change_from_prior_year": 100,
+      "deaths": 117900,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": 0.0008488964346349745,
+      "year": 2012
+    },
+    {
+      "change_from_prior_year": 800,
+      "deaths": 118700,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": 0.006785411365564037,
+      "year": 2013
+    },
+    {
+      "change_from_prior_year": 1200,
+      "deaths": 119900,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": 0.010109519797809604,
+      "year": 2014
+    },
+    {
+      "change_from_prior_year": 1600,
+      "deaths": 121500,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": 0.013344453711426188,
+      "year": 2015
+    },
+    {
+      "change_from_prior_year": 1900,
+      "deaths": 123400,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": 0.015637860082304528,
+      "year": 2016
+    },
+    {
+      "change_from_prior_year": 1900,
+      "deaths": 125300,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": 0.01539708265802269,
+      "year": 2017
+    },
+    {
+      "change_from_prior_year": 1600,
+      "deaths": 126900,
+      "disclosure_status": "OK",
+      "relative_change_from_prior_year": 0.012769353551476457,
+      "year": 2018
+    }
+  ]
+}
