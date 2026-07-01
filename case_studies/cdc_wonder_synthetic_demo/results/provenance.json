@@ -1,13 +1,13 @@
 {
   "case_study": "cdc_wonder_synthetic_demo",
-  "generated_at": "2026-07-01T14:31:36.362957+00:00",
+  "generated_at": "2026-07-01T15:56:00.523493+00:00",
   "input_schema_fingerprint": "synthetic-fixed-v1",
   "limitations": [
     "The numbers are entirely synthetic.",
     "This case study demonstrates the disclosure posture; it does NOT demonstrate a real-world clinical finding."
   ],
   "package_versions": {
-    "neurosurg_epi_agent": "0.3.0",
+    "neurosurg_epi_agent": "0.3.1",
     "platform": "Windows-11-10.0.26200-SP0",
     "python": "3.12.9"
   },

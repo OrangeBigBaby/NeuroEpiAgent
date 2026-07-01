@@ -34,6 +34,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
+from neurosurg_epi_agent import __version__
+
 
 # Synthetic input — entirely invented for the demo. Numbers are NOT real
 # WONDER data. The trend is monotonically increasing because that is
@@ -260,7 +262,7 @@ def build_provenance(
         "generated_at": utc_now_iso(),
         "python_version": platform.python_version(),
         "package_versions": {
-            "neurosurg_epi_agent": "0.3.0",
+            "neurosurg_epi_agent": __version__,
             "python": platform.python_version(),
             "platform": platform.platform(),
         },

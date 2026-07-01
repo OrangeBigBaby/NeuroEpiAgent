@@ -216,6 +216,10 @@ class SEERAdapter:
     identity = AdapterIdentity(
         database="SEER",
         label="SEER (Surveillance, Epidemiology, and End Results) registry exports",
+        # Adapter IMPLEMENTATION version for SEER — bumped when this adapter's
+        # own logic changes. Distinct from the package release version
+        # (neurosurg_epi_agent.__version__) and from the shared adapter
+        # protocol version (ADAPTER_VERSION).
         version="0.1.0",
         data_formats=("csv",),
         capabilities=("metadata-inspection",),

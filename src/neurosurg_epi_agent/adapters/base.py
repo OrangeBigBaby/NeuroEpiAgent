@@ -17,7 +17,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Protocol, runtime_checkable
 
-# Bump when the adapter protocol or metadata shapes change in a breaking way.
+# Adapter PROTOCOL / schema version — the shape of ``InspectionResult``,
+# ``MemberMetadata``, etc. Bump only when that contract changes in a breaking
+# way. This is a DISTINCT version axis from the software package release
+# version (``neurosurg_epi_agent.__version__``): a release may ship without a
+# protocol bump, and a protocol bump need not coincide with a release. Do not
+# collapse the two.
 ADAPTER_VERSION = "0.1.0"
 
 

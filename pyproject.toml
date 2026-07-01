@@ -4,7 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "neurosurg-epi-agent"
-version = "0.3.0"
+# `version` is intentionally omitted here: it is read dynamically from
+# `neurosurg_epi_agent.__version__` (single source of truth) via
+# [tool.setuptools.dynamic] below. Bump the literal in src/neurosurg_epi_agent/__init__.py.
+dynamic = ["version"]
 description = "Reproducible neurosurgical epidemiology planning for public clinical databases (NHANES-first MVP)."
 readme = "README.md"
 license = { text = "MIT" }
@@ -32,6 +35,11 @@ neurosurg-epi = "neurosurg_epi_agent.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.dynamic]
+# Single source of truth: the release version literal lives in
+# src/neurosurg_epi_agent/__init__.py and is read here at build time.
+version = { attr = "neurosurg_epi_agent.__version__" }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

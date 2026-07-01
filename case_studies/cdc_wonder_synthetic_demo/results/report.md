@@ -56,9 +56,9 @@ by a plateau / modest rise after 2012. This pattern SUGGESTS
 
 ## Reproducibility
 
-- Generated at: `2026-07-01T14:31:36.362957+00:00`
+- Generated at: `2026-07-01T15:56:00.523493+00:00`
 - Python version: `3.12.9`
-- Package version: `0.3.0`
+- Package version: `0.3.1`
 - Random seed: `2026` (unused in this run;
   recorded for forward compatibility with bootstrap-style
   extensions).

@@ -31,6 +31,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Tuple
 
+from neurosurg_epi_agent import __version__
 from neurosurg_epi_agent.adapters import SEERAdapter
 from neurosurg_epi_agent.adapters.seer import _DATA_VERSION_FIELDS
 
@@ -162,7 +163,7 @@ def run_case_study(
         "generated_at": utc_now_iso(),
         "python_version": platform.python_version(),
         "package_versions": {
-            "neurosurg_epi_agent": "0.3.0",
+            "neurosurg_epi_agent": __version__,
             "python": platform.python_version(),
             "platform": platform.platform(),
         },
