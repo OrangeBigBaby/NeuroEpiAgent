@@ -1,0 +1,129 @@
+# NeuroSurgEpiAgent Public-Database Planning Benchmark
+# Draft v0.2.0 (EXTENDS the frozen v0.1.0; v0.1.0 is NOT modified)
+#
+# This file is a NEW DRAFT. v0.1.0 is frozen at benchmarks/tasks.v0.1.0.yaml
+# and is NOT modified by this file. Tasks added here are *new* and must
+# undergo the same expert adjudication process described in
+# benchmarks/GOLD_STANDARD_PROCESS.md before the benchmark can be used for
+# scientific evaluation or publication.
+#
+# Scope of v0.2.0-draft additions:
+#   * CDC WONDER feasible / infeasible tasks (new).
+#   * SEER metadata-inspection tasks (new; feasibility-only).
+#   * SEER clinical-analysis tasks remain at the planned, unverified
+#     state of v0.1.0.
+
+schema_version: "1.0"
+benchmark_name: "NeuroSurgEpiAgent Public-Database Planning Benchmark"
+benchmark_version: "0.2.0-draft"
+frozen_timestamp: "2026-07-01T00:00:00Z"
+status: "DRAFT - AUTHORED GOLD ASSERTIONS PENDING INDEPENDENT EXPERT ADJUDICATION"
+
+disclaimer: >
+  This benchmark file is a DRAFT extension to the frozen v0.1.0 benchmark.
+  It contains new tasks covering CDC WONDER feasibility and SEER metadata
+  inspection, plus the existing 30 v0.1.0 tasks carried over as references.
+  The gold assertions in this draft have NOT been independently validated by
+  expert adjudicators. Tasks here MUST NOT be used for scientific claims about
+  agent performance, clinical utility, or comparative effectiveness until
+  expert adjudication per benchmarks/GOLD_STANDARD_PROCESS.md is complete.
+  The previously frozen v0.1.0 benchmark (benchmarks/tasks.v0.1.0.yaml) is
+  not modified by this draft.
+
+extends: "benchmarks/tasks.v0.1.0.yaml"
+
+# Each task's `capability` field tells the evaluation which adapter surface
+# the task exercises. This is the *only* piece of metadata the draft
+# commits to that v0.1.0 does not already have.
+task_capability_legend:
+  nhanes-planning: "NHANES planning / variable mapping (verified adapter)."
+  nhanes-clinical: "NHANES analytic question (illustrative only)."
+  wonder-feasibility: "CDC WONDER metadata / feasibility (verified adapter)."
+  wonder-clinical: "CDC WONDER aggregate-output clinical question (illustrative)."
+  seer-metadata: "SEER metadata inspection only (verified adapter)."
+  seer-clinical: "SEER clinical analysis (PLANNED — adapter does not support; expected infeasible)."
+
+new_tasks:
+
+  # --------------------------------------------------------------------------- #
+  # CDC WONDER (metadata / feasibility)
+  # --------------------------------------------------------------------------- #
+
+  - id: wonder_cns_tumor_mortality_trend
+    domain: tumor
+    question: "What are the U.S. age-adjusted mortality rates for malignant CNS neoplasms (C70-C72) by year, from the most recent Underlying Cause of Death export?"
+    expected_database: CDC_WONDER
+    expected_feasible: true
+    capability: wonder-feasibility
+    gold_notes: "Feasible; the adapter inspects the WONDER export and returns dataset / cause / group-by / standard population / rate basis / query date. No cell values are emitted by the metadata-only adapter."
+    review_status: needs_expert_review
+
+  - id: wonder_intracranial_injury_mortality_trend
+    domain: tbi
+    question: "What are the U.S. age-adjusted mortality rates for intracranial injury (S06) by year, from the Multiple Cause of Death export?"
+    expected_database: CDC_WONDER
+    expected_feasible: true
+    capability: wonder-feasibility
+    gold_notes: "Feasible; the adapter distinguishes UCD from MCD in provenance.database_family."
+    review_status: needs_expert_review
+
+  - id: wonder_cell_recovery_request
+    domain: tumor
+    question: "Recover the underlying death count for a Suppressed CDC WONDER cell so we can include it in our figure caption."
+    expected_database: CDC_WONDER
+    expected_feasible: false
+    capability: wonder-feasibility
+    gold_notes: "Infeasible; the adapter never attempts to recover a Suppressed cell. The router / guardrails refuse and the adapter documents the policy."
+    review_status: needs_expert_review
+
+  - id: wonder_ucd_mcd_mix
+    domain: stroke
+    question: "Combine the Underlying Cause of Death and Multiple Cause of Death exports into one mortality chart for I60-I69."
+    expected_database: CDC_WONDER
+    expected_feasible: false
+    capability: wonder-feasibility
+    gold_notes: "Infeasible; the adapter documents the UCD vs MCD distinction and refuses to mix them head-to-head."
+    review_status: needs_expert_review
+
+  # --------------------------------------------------------------------------- #
+  # SEER (metadata inspection only)
+  # --------------------------------------------------------------------------- #
+
+  - id: seer_metadata_inventory
+    domain: tumor
+    question: "Inventory the headers, byte sizes, and schema fingerprints of every SEER*Stat export in the local researcher's directory."
+    expected_database: SEER
+    expected_feasible: true
+    capability: seer-metadata
+    gold_notes: "Feasible; the SEER adapter emits header + schema fingerprint + (optional) SHA-256 for every file. No case row is read."
+    review_status: needs_expert_review
+
+  - id: seer_cns_row_count_by_year
+    domain: tumor
+    question: "How many primary CNS tumors are in export_C69-C72.csv per year of diagnosis?"
+    expected_database: SEER
+    expected_feasible: false
+    capability: seer-clinical
+    gold_notes: "Infeasible through the metadata-only adapter; the user must complete docs/SEER_STUDY_CONTRACT.md and run a downstream analysis script that respects the disclosure posture in § G."
+    review_status: needs_expert_review
+
+  - id: seer_brain_cns_survival
+    domain: tumor
+    question: "What is the 5-year cause-specific survival for SEER Brain and CNS Recode category X, 2018-2021?"
+    expected_database: SEER
+    expected_feasible: false
+    capability: seer-clinical
+    gold_notes: "Infeasible through the metadata-only adapter; same rationale as above."
+    review_status: needs_expert_review
+
+carried_over_from_v010:
+  # The 30 v0.1.0 tasks are referenced, not redefined. See
+  # benchmarks/tasks.v0.1.0.yaml for their authoritative content.
+  ref: benchmarks/tasks.v0.1.0.yaml
+  task_count: 30
+
+draft_caveats:
+  - "v0.1.0 tasks are unchanged; the draft does not alter their gold assertions."
+  - "Every new task above is marked review_status=needs_expert_review."
+  - "No scientific claims about agent performance may be made from this draft."
+  - "Two-expert adjudication per benchmarks/GOLD_STANDARD_PROCESS.md must complete before any v0.2.0 task is used in a manuscript table."

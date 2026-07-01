@@ -1,10 +1,12 @@
 # NeuroSurgEpiAgent Benchmark Card
 
-**Version**: 0.1.0 (DRAFT - PENDING EXPERT ADJUDICATION)
-**Frozen**: 2026-06-29 (Draft freeze, pending expert sign-off)
-**SHA-256**: `{PENDING_GENERATION}`
-**Task Count**: 30
-**Status**: ⚠️ **DRAFT - CANNOT SUPPORT SCIENTIFIC CLAIMS**
+**Active frozen**: v0.1.0 (DRAFT — PENDING EXPERT ADJUDICATION; 30 tasks)
+**Active draft**: v0.2.0-draft (DRAFT — PENDING EXPERT ADJUDICATION; adds 7 CDC WONDER + SEER tasks; does NOT modify v0.1.0)
+**Frozen**: 2026-06-29 (v0.1.0)
+**Drafted**: 2026-07-01 (v0.2.0-draft)
+**Task count (v0.1.0)**: 30
+**Task count (v0.2.0-draft new)**: 7
+**Status**: ⚠️ **DRAFT — CANNOT SUPPORT SCIENTIFIC CLAIMS**
 
 ---
 
@@ -114,6 +116,10 @@ Each task is scored on six metrics against the frozen gold standard:
 ## Version History
 
 - **v0.1.0** (2026-06-29) — Initial frozen draft with 30 tasks across 9 domains. Pending expert adjudication.
+- **v0.2.0-draft** (2026-07-01) — Adds 7 new tasks (CDC WONDER feasibility / SEER
+  metadata-only). Does NOT modify v0.1.0. New tasks are all
+  `review_status=needs_expert_review`. Pending the same expert adjudication
+  process. Cannot be used for scientific claims until that process completes.
 
 ---
 
