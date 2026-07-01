@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+title: "NeuroSurgEpiAgent"
+message: >-
+  If you use this software in a publication, please cite it using the
+  metadata below and reference the corresponding archived release.
+type: software
+license: MIT
+repository-code: "https://github.com/OrangeBigBaby/NeuroEpiAgent"
+url: "https://github.com/OrangeBigBaby/NeuroEpiAgent"
+date-released: 2026-07-01
+version: "0.2.0"
+authors:
+  - name: "NeuroSurgEpiAgent contributors"
+    alias: "OrangeBigBaby"
+keywords:
+  - "neurosurgery"
+  - "epidemiology"
+  - "NHANES"
+  - "CDC WONDER"
+  - "SEER"
+  - "survey-design"
+  - "reproducibility"
+  - "deterministic-guardrails"
+preferred-citation:
+  type: article
+  title: >-
+    NeuroSurgEpiAgent: deterministic guardrails that make an LLM planner
+    safe for reproducible NHANES epidemiology
+  authors:
+    - name: "NeuroSurgEpiAgent contributors"
+  journal: "Manuscript in preparation; see docs/MANUSCRIPT_PLAN.md"
+  year: 2026
+references:
+  - type: software
+    title: "Python"
+    version: ">=3.10"
+  - type: software
+    title: "pydantic"
+    version: ">=2.5"
+  - type: software
+    title: "PyYAML"
+    version: ">=6.0"

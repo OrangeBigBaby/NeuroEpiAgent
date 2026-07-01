@@ -10,10 +10,43 @@ survey-design rules deterministically, and emitting a reproducibility manifest.
 It is a **planner and explainer**, never the source of truth for variable names
 or statistical validity.
 
+> **Repository slug.** The GitHub repository name is `NeuroEpiAgent` for
+> historical reasons; the product, Python package, and manuscript all use
+> **NeuroSurgEpiAgent**. We recommend renaming the GitHub repository to
+> `NeuroSurgEpiAgent` so the URL matches the rest of the artifact; until
+> then, the mapping is documented here and in `CITATION.cff`.
+
 > Status: v0.2 deterministic gate implemented - router with conservative refusal,
 > Arm A pre-planner feasibility check, minimal plans for infeasible questions, and
 > Arm B token reuse. v0.1 baseline preserved in `experiments/pilot_glm47_dev/`.
 > See [v0.2 Implementation](#v02-deterministic-gate-implementation).
+
+## Capability matrix
+
+| Capability | NHANES | CDC WONDER | SEER | CHARLS |
+| --- | --- | --- | --- | --- |
+| **Planning adapter** | implemented / supported | implemented / supported | implemented / supported | planned / not supported |
+| **Metadata inspection** | implemented / supported | implemented / supported | implemented / supported | implemented / supported |
+| **Analysis execution** | light case study only | not in this repo | not in this repo (contract only) | not in this repo |
+| **Publication-ready evidence** | descriptive case study | aggregate + disclosure-checked only | none yet (study contract required) | none |
+
+"Metadata inspection" means a metadata-only JSON describing the local
+files (sizes, hashes, schema fingerprints, query parameters). It never
+emits a participant row, a value frequency, or a cell value from the
+underlying file.
+
+## What is *not* public in this repository
+
+- Local raw data directories (`/02_data_raw/`, `/03_data_processed/`,
+  `data/cache/`, `SEERdatabase/`).
+- `.codex/` session caches and `.venv/` Python environments.
+- Generated logs, PIDs, and intermediate `.duckdb` / `.parquet` artifacts.
+- SEER case listings, SEER\*Stat matrices, and any analytic dataset that
+  contains one or more records per tumor.
+- API keys, tokens, passwords, or absolute filesystem paths.
+
+See `docs/DATA_GOVERNANCE.md` for the full policy and the rationale for
+each exclusion.
 
 ---
 
@@ -338,6 +371,24 @@ lightweight demonstration.
   router and guardrails say so explicitly rather than fabricating a mapping.
 - **Adapter databases (GBD/SEER/CHARLS) are not active.** They appear only as
   planned/infeasible routing targets.
+- **SEER is metadata-only.** The `SEERAdapter` inspects a SEER\*Stat export
+  directory and emits schema + provenance only — no case row, no frequency,
+  no unique value. Any clinical analysis must be backed by the signed-off
+  `docs/SEER_STUDY_CONTRACT.md`.
+
+## Data access and reproduction
+
+The repository never redistributes source data. To reproduce a result:
+
+| Source | Access | What the repo ships |
+| --- | --- | --- |
+| NHANES | public; download from CDC | aggregate case-study outputs; downloader in `case_studies/nhanes_stroke_2017_2018/` |
+| CDC WONDER | public; query at wonder.cdc.gov | metadata-only inspection via `CDCWonderAdapter`; aggregated, disclosure-checked results only |
+| SEER | requires SEER DUA; apply via seer.cancer.gov | metadata-only inspection via `SEERAdapter`; the user fills in `docs/SEER_STUDY_CONTRACT.md` before any analysis |
+
+Set `NEUROSURG_EPI_SEER_ROOT` and `NEUROSURG_EPI_CDC_WONDER_ROOT` in a
+local `.env` (template in `.env.example`) before running the inspection
+scripts.
 
 ## Documentation
 

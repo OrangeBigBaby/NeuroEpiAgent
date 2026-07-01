@@ -33,4 +33,19 @@ do not `eval`/`exec` plan fields, and do not introduce network calls.
 
 - Security of downstream R/Python analysis code that a user writes from a
   validated plan — that runs outside this library.
-- Access controls for GBD/SEER registry data (adapter not yet implemented).
+- Access controls for GBD/SEER registry data. The SEER adapter is
+  metadata-only; the CHARLS adapter requires authorized data and is
+  treated as `local-authorized`. NHANES and CDC WONDER are public.
+
+## Data-handling boundary
+
+The repository enforces a strict data-handling boundary; see
+`docs/DATA_GOVERNANCE.md` and `docs/DATA_PROVENANCE.md`. The following
+items are never written to a tracked artifact, by code or by hand:
+
+- Participant / case / household rows from any data source.
+- Aggregate cell values with `Deaths <= 9` from CDC WONDER.
+- A SEER record's individual values, frequencies, or unique-value lists.
+- Absolute filesystem paths to local data roots; the token
+  `<user-supplied>` is used in their place.
+- API keys, tokens, passwords, or any credential.

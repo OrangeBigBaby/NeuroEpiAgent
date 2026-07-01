@@ -48,3 +48,6 @@ pytest
 - Auto-fetching raw NHANES data or any network call inside the package.
 - Treating GBD/SEER/CHARLS as active data sources.
 - LLM-generated variable names or statistical validity decisions.
+- Raw data, derived datasets, or `.codex/` / `.venv` session artifacts in
+  any commit. See `docs/DATA_GOVERNANCE.md` for the exclusion list and
+  the rationale.
