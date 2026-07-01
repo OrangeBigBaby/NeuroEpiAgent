@@ -1,16 +1,26 @@
-# HISS special issue example-paper download manifest
+# HISS special issue example-paper reference manifest
 
-Date: 2026-06-29
+Date: 2026-06-29 (PDFs removed 2026-07-01 for license reasons — see below)
 
-## Downloaded full-text PDFs
+## Reference papers (metadata-only; full-text PDFs NOT redistributed)
 
-| File | Source URL | SHA-256 |
+The following arXiv papers were identified as relevant Health Information
+Science and Systems comparators. The full-text PDFs are **not** redistributed
+in this repository. arXiv grants its submitter a non-exclusive license to
+distribute on arXiv.org, but third-party redistribution rights depend on each
+article's individual license, which we have not independently confirmed for
+these three papers. Rather than redistribute under an unconfirmed license, we
+keep only the arXiv URL, the citation metadata, and the SHA-256 of the PDF as
+it appeared on arXiv at the time of review. Readers should fetch the PDF
+directly from arXiv using the URL below.
+
+| Paper | arXiv URL | SHA-256 of PDF (at review time) |
 | --- | --- | --- |
-| `rag_drug_contraindications_bang_2026_arxiv.pdf` | https://arxiv.org/pdf/2508.06145 | `1B45F7A8AC9B71DAB1B0E75D4A3828C234F2E4E1292A32A23A0D4CA0642BE804` |
-| `medagentbench_2025_arxiv.pdf` | https://arxiv.org/pdf/2501.14654 | `B2F47C4271453DEEEBF2C29523CDB614B8C01B032D8C2EE3A55E322179956415` |
-| `llm_agents_research_reproducibility_alzheimers_2025_arxiv.pdf` | https://arxiv.org/pdf/2505.23852 | `BF913E402F35ABFD77533254FCCEB6FEE8F8728BC730C63D15D5DF4D9989DCFA` |
+| Bang et al. (2026), RAG drug-contraindications | https://arxiv.org/pdf/2508.06145 | `1B45F7A8AC9B71DAB1B0E75D4A3828C234F2E4E1292A32A23A0D4CA0642BE804` |
+| MedAgentBench (2025) | https://arxiv.org/pdf/2501.14654 | `B2F47C4271453DEEEBF2C29523CDB614B8C01B032D8C2EE3A55E322179956415` |
+| LLM agents research reproducibility (Alzheimer's, 2025) | https://arxiv.org/pdf/2505.23852 | `BF913E402F35ABFD77533254FCCEB6FEE8F8728BC730C63D15D5DF4D9989DCFA` |
 
-## Metadata-only examples
+## Metadata-only examples (subscription-restricted)
 
 The following examples were identified as relevant Health Information Science and
 Systems comparators, but full-text PDF download was not retained locally because
@@ -23,4 +33,3 @@ comparison unless institutional access is available.
 | Cong et al., "Multiple feature selection based on an optimization strategy for causal analysis of health data" | https://link.springer.com/article/10.1007/s13755-024-00312-8 |
 | "KSDKG: construction and application of knowledge graph for kidney stone disease based on biomedical literature and public databases" | https://link.springer.com/article/10.1007/s13755-024-00309-3 |
 | "Explainable federated learning scheme for secure healthcare data sharing" | https://link.springer.com/article/10.1007/s13755-024-00306-6 |
-

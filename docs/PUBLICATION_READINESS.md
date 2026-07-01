@@ -39,7 +39,9 @@ clinical utility, superiority to other systems, or formal epidemiologic inferenc
   merge, aggregate weighted prevalence, and aggregate-only outputs.
 - Manuscript draft: IMRAD manuscript updated with benchmark integrity artifacts
   and NHANES case-study results.
-- Test suite: 220 collected tests passing.
+- Test suite: passing (the count grows over time; the latest total is shown in
+  the GitHub Actions run on `main` and in the most recent release notes — not
+  hard-coded here, so the document cannot drift out of sync).
 
 ## Current verification
 

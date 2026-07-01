@@ -4,6 +4,17 @@ Date: 2026-07-01
 Tags: `v0.2.0` (initial public baseline) and `v0.3.0` (with case studies)
 Remote: https://github.com/OrangeBigBaby/NeuroEpiAgent
 
+> **Correction notice (added for v0.3.1).** This report was written for the
+> v0.3.0 acceptance and is preserved as a historical record — do not treat its
+> CI-green status row as a live claim. v0.3.0's remote CI was in fact **red**
+> on the tagged commit: the in-workflow secret scan self-triggered on its own
+> grep expression, and the symlink-escape pytest tests ran (and failed) on CI
+> runners even though they skip on hosts without OS symlink privilege. v0.3.1
+> fixes both (see `CHANGELOG.md` and the v0.3.1 release notes). For the current
+> CI status, see the live GitHub Actions tab and the most recent release; no
+> release of this project should be described as CI-green unless the Actions
+> run for its tagged commit is actually green.
+
 ## 1. Acceptance summary
 
 | Criterion | Result |
