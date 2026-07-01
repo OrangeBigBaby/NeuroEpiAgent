@@ -33,7 +33,19 @@ jobs:
         # Use `python -m pytest` so the interpreter owning the installed
         # `neurosurg-epi-agent` + pytest is the one that runs. `-ra` summarizes
         # everything except passed tests; full output is retained on failure.
-        run: python -m pytest -ra
+        # `|| dump-traceback` runs on failure so the traceback reaches the
+        # public Actions log (the raw job log is otherwise auth-gated).
+        run: |
+          set +e
+          python -m pytest -ra --tb=long --showlocals
+          rc=$?
+          if [ $rc -ne 0 ]; then
+            echo "==== pytest FAILED with exit code $rc ===="
+            echo "Re-running with -v to expose test names:"
+            python -m pytest -ra --tb=long --showlocals -v 2>&1 | tail -200
+            echo "==== end failure dump ===="
+          fi
+          exit $rc
 
   secret-scan:
     name: secret scan on tracked tree
