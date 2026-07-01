@@ -5,8 +5,9 @@
 
 > Source code, synthetic test fixtures, analysis-implementation
 > specification, and disclosure-checked case-study outputs are
-> available at https://github.com/OrangeBigBaby/NeuroEpiAgent,
-> archived under release tag `v0.3.1` (commit `{{COMMIT_SHA}}`). The
+> available at https://github.com/OrangeBigBaby/NeuroEpiAgent, archived
+> under release tag `v0.3.1` (full commit SHA recorded in that tag's GitHub
+> Release). The
 > repository ships the Python package `neurosurg-epi-agent` (version
 > `0.3.1`), the `CDCWonderAdapter` (metadata-only inspection of CDC
 > WONDER exports), the `SEERAdapter` (metadata-only inspection of
